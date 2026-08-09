@@ -1,0 +1,66 @@
+/* Performance Optimization CSS */
+
+/* Faster animations for better perceived performance */
+:root {
+  --animation-speed-fast: 0.2s;
+  --animation-speed-medium: 0.3s;
+  --animation-speed-slow: 0.5s;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* GPU acceleration for better performance */
+.gpu-accelerate {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize repaints */
+.optimize-repaint {
+  contain: layout style paint;
+}
+
+/* Critical CSS - Inline this for faster first paint */
+.critical-path {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Lazy load sections below the fold */
+.lazy-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
+/* Image optimization */
+img {
+  content-visibility: auto;
+}
+
+/* Smooth scrolling with performance in mind */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Optimize font loading */
+@font-face {
+  font-display: swap;
+}

@@ -1,0 +1,31 @@
+/* جعل أيقونة الفافيكون دائرية في المتصفح */
+:root {
+  --favicon-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>');
+}
+
+/* تطبيق القناع على روابط الفافيكون */
+link[rel="icon"],
+link[rel="shortcut icon"],
+link[rel="apple-touch-icon"] {
+  border-radius: 50%;
+  overflow: hidden;
+  -webkit-mask-image: var(--favicon-mask);
+  mask-image: var(--favicon-mask);
+}
+
+/* إنشاء كود جافاسكربت لتطبيق الحالة الدائرية على الفافيكون عند التحميل */
+@supports selector(:has(html)) {
+  html:has(link[rel="icon"]) {
+    --favicon-applied: true;
+  }
+}
+
+/* تطبيق التأثير عبر جافاسكربت مضمن لدعم المتصفحات القديمة */
+head::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+

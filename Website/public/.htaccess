@@ -1,0 +1,168 @@
+# ملف تكوين الخادم لتحسين الأداء وتفعيل التخزين المؤقت
+# ملاحظة: هذا الملف يعمل على خوادم Apache، قد تحتاج لتعديله لخوادم أخرى مثل Nginx
+
+# تفعيل ضغط GZIP
+<IfModule mod_deflate.c>
+  # تفعيل ضغط المحتوى
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/xhtml+xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/atom_xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/ld+json
+  AddOutputFilterByType DEFLATE application/x-font-ttf
+  AddOutputFilterByType DEFLATE application/x-font-otf
+  AddOutputFilterByType DEFLATE font/truetype
+  AddOutputFilterByType DEFLATE font/opentype
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  
+  # حذف التحقق من الإصدار القديم من IE
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  
+  # تجنب ضغط المحتوى المضغوط بالفعل
+  SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|zip|gz|bz2|webp)$ no-gzip no-vary
+  
+  # تأكد من عدم تغيير الردود المضغوطة من قبل البروكسي
+  Header append Vary User-Agent env=!dont-vary
+</IfModule>
+
+# تفعيل التخزين المؤقت لفترات زمنية طويلة
+<IfModule mod_expires.c>
+  ExpiresActive On
+  
+  # الافتراضي
+  ExpiresDefault "access plus 1 month"
+  
+  # صور الموقع
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  
+  # ملفات الويب الشائعة
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType text/javascript "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType application/x-javascript "access plus 1 month"
+  
+  # الخطوط
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  ExpiresByType application/x-font-ttf "access plus 1 year"
+  ExpiresByType font/opentype "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  
+  # المستندات
+  ExpiresByType application/pdf "access plus 1 month"
+  ExpiresByType application/x-pdf "access plus 1 month"
+  
+  # وسائط متعددة
+  ExpiresByType audio/ogg "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType video/ogg "access plus 1 year"
+  ExpiresByType video/webm "access plus 1 year"
+  
+  # البيانات
+  ExpiresByType application/json "access plus 5 minutes"
+  ExpiresByType application/ld+json "access plus 5 minutes"
+  ExpiresByType application/xml "access plus 5 minutes"
+  ExpiresByType text/xml "access plus 5 minutes"
+  
+  # محتوى HTML يتم تحديثه أكثر
+  ExpiresByType text/html "access plus 10 minutes"
+</IfModule>
+
+# إعدادات رؤوس HTTP للتخزين المؤقت
+<IfModule mod_headers.c>
+  # تعيين توجيهات التخزين المؤقت لفترات زمنية مختلفة
+  
+  # الملفات الثابتة - سنة واحدة
+  <FilesMatch "\.(ico|pdf|flv|jpe?g|png|gif|webp|svg|swf|mp3|mp4|webm|ttf|woff|woff2|otf|eot)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+  
+  # ملفات CSS و JS - شهر
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "max-age=2592000, public, immutable"
+  </FilesMatch>
+  
+  # ملفات HTML - 10 دقائق
+  <FilesMatch "\.(html|htm|xml)$">
+    Header set Cache-Control "max-age=600, public"
+  </FilesMatch>
+  
+  # ملفات API والبيانات - 5 دقائق
+  <FilesMatch "\.(json)$">
+    Header set Cache-Control "max-age=300, public"
+  </FilesMatch>
+  
+  # تجنب التخزين المؤقت للمحتوى الديناميكي
+  <FilesMatch "\.(php)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+  
+  # تفعيل Keep-Alive
+  Header set Connection keep-alive
+  
+  # منع التصفح غير المباشر
+  Header set X-Frame-Options "SAMEORIGIN"
+  
+  # حماية XSS
+  Header set X-XSS-Protection "1; mode=block"
+  
+  # منع كشف نوع المحتوى
+  Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# إعادة توجيه HTTP إلى HTTPS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# تفعيل HTTP/2 إذا كان متاحاً
+<IfModule http2_module>
+  Protocols h2 h2c http/1.1
+</IfModule>
+
+# قواعد إعادة الكتابة للتطبيقات التي تعمل بتقنية Next.js
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # التوجيه لملفات المصدر الثابتة من المجلد العام
+  RewriteRule ^_next/static/(.*)$ /_next/static/$1 [L]
+  
+  # توجيه طلبات API
+  RewriteRule ^api/(.*)$ /api/$1 [L]
+  
+  # إعادة الطلبات لواجهة Next.js للتعامل معها
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ /index.html [L]
+</IfModule>
+
+# تحسين أداء تطبيق Next.js من خلال تعديل القواعد
+<IfModule mod_headers.c>
+  # تفعيل تحميل مبكر للموارد المهمة
+  <FilesMatch "index\.html">
+    Header set Link "</fonts/Cairo-Regular.ttf>; rel=preload; as=font; crossorigin=anonymous, </fonts/Cairo-Bold.ttf>; rel=preload; as=font; crossorigin=anonymous"
+  </FilesMatch>
+</IfModule>

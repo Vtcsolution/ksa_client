@@ -1,0 +1,112 @@
+{
+  "name": "Omnira Valet | خدمات صف السيارات الاحترافية في السعودية",
+  "short_name": "Omnira Valet",
+  "description": "خدمات الفاليه باركينج وإدارة المواقف الذكية في المملكة العربية السعودية",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#C68B48",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "طلب خدمة فاليه",
+      "short_name": "طلب فاليه",
+      "description": "طلب خدمة فاليه باركينج",
+      "url": "/services/valet-parking?utm_source=pwa",
+      "icons": [{ "src": "/icons/valet-shortcut.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "تواصل معنا",
+      "short_name": "اتصل بنا",
+      "description": "تواصل مع فريق خدمة العملاء",
+      "url": "/contact?utm_source=pwa",
+      "icons": [{ "src": "/icons/contact-shortcut.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home-screenshot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "الصفحة الرئيسية لشركة أومنيرا فاليه"
+    },
+    {
+      "src": "/screenshots/services-screenshot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "خدمات أومنيرا فاليه المتنوعة"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=sa.omnira.app",
+      "id": "sa.omnira.app"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/sa/app/omnira/id0000000000"
+    }
+  ],
+  "prefer_related_applications": false,
+  "categories": ["business", "transportation", "lifestyle"]
+}

@@ -1,0 +1,96 @@
+# robots.txt for OMNIRA - Updated November 2025
+# تعليمات لروبوتات محركات البحث
+
+# السماح لجميع الروبوتات
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /_next/
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /dev/
+
+# سماح خاص لروبوت جوجل
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# سماح خاص لروبوت بينج
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# سماح خاص لروبوت ياهو
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# خريطة الموقع
+Sitemap: https://omniravalet.com/sitemap.xml
+
+# حظر ملفات القوالب
+Disallow: /*.md$
+Disallow: /*.tsx$
+Disallow: /*.ts$
+Disallow: /*.log$
+Disallow: /*.config.js$
+Disallow: /vercel.json$
+
+# السماح بالوصول إلى ملفات الخرائط
+Allow: /sitemap.xml
+Allow: /sitemap-*.xml
+
+# تعامل خاص مع روبوت الصور من جوجل
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /public/images/
+Allow: /public/og-*.jpg
+Allow: /favicon.png
+Allow: /icons/
+Disallow: /_next/image
+
+# تعامل خاص مع محرك جوجل الجوال
+User-agent: Googlebot-Mobile
+Allow: /
+Disallow: /_next/
+Disallow: /api/
+
+# حظر الروبوتات المضرة ومحللي المنافسين
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: Rogerbot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: Screaming Frog SEO Spider
+Disallow: /
+
+# معلومات المضيف
+Host: https://omniravalet.com
+
+# توجيهات خاصة بالتحكم في معدل الزحف
+User-agent: *
+Request-rate: 1/2s
+
+# معلومات إضافية لمحركات البحث
+# موقع شركة أومنيرا لخدمات الفاليه باركينج وإدارة المواقف في المملكة العربية السعودية
