@@ -10,7 +10,7 @@
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
-const APP_URL = process.env.APP_URL ?? "http://localhost:3000";
+const APP_URL = process.env.APP_URL ?? "http://localhost:3417";
 const SECRET = process.env.ZIWO_POLL_SECRET;
 const INTERVAL_MS = Number(process.env.ZIWO_POLL_INTERVAL_MS ?? 30000);
 
