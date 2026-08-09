@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Omnira Valet — Platform Walkthrough</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon.png" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+
+  :root {
+    --ground: #F7F3EA;
+    --surface: #FFFFFF;
+    --surface-2: #FBF6EA;
+    --ink: #241D14;
+    --ink-muted: #7C7061;
+    --gold: #9C7A24;
+    --gold-dim: #D9C48D;
+    --gold-wash: rgba(156, 122, 36, 0.08);
+    --line: rgba(36, 29, 20, 0.12);
+    --good: #3F7A4E;
+    --warn: #A6631F;
+    --shadow: 0 1px 2px rgba(36,29,20,0.04), 0 8px 24px rgba(36,29,20,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B0A08;
+      --surface: #171310;
+      --surface-2: #1E1811;
+      --ink: #F2EBDD;
+      --ink-muted: #A79C8C;
+      --gold: #C6A24D;
+      --gold-dim: #8A6D34;
+      --gold-wash: rgba(198, 162, 77, 0.10);
+      --line: rgba(242, 235, 221, 0.10);
+      --good: #6FB483;
+      --warn: #D69A52;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0B0A08;
+    --surface: #171310;
+    --surface-2: #1E1811;
+    --ink: #F2EBDD;
+    --ink-muted: #A79C8C;
+    --gold: #C6A24D;
+    --gold-dim: #8A6D34;
+    --gold-wash: rgba(198, 162, 77, 0.10);
+    --line: rgba(242, 235, 221, 0.10);
+    --good: #6FB483;
+    --warn: #D69A52;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.35);
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .display {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  }
+
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(28px, 6vw, 64px) 22px 90px;
+  }
+
+  /* ===== Header ===== */
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 14px;
+  }
+
+  h1.display {
+    font-size: clamp(32px, 5vw, 46px);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: 17px;
+    color: var(--ink-muted);
+    max-width: 62ch;
+    margin: 0 0 8px;
+  }
+
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== Two doors ===== */
+
+  .doors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 34px 0 8px;
+  }
+  @media (max-width: 560px) {
+    .doors { grid-template-columns: 1fr; }
+  }
+
+  .door {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 20px 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .door .tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 8px;
+  }
+
+  .door h3.display {
+    font-size: 21px;
+    font-weight: 400;
+    margin: 0 0 8px;
+  }
+
+  .door p {
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin: 0 0 14px;
+  }
+
+  .door a.url {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--gold-wash);
+    border: 1px solid var(--gold-dim);
+    border-radius: 8px;
+    padding: 7px 11px;
+    text-decoration: none;
+  }
+  .door a.url:hover { border-color: var(--gold); }
+
+  /* ===== Divider ===== */
+
+  .rule {
+    height: 1px;
+    background: var(--line);
+    margin: 46px 0;
+  }
+
+  .section-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 0 0 6px;
+  }
+
+  .section-heading.display {
+    font-size: 26px;
+    font-weight: 400;
+    margin: 0 0 30px;
+    text-wrap: balance;
+  }
+
+  /* ===== Steps ===== */
+
+  .step {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
+  }
+  .step:first-of-type { border-top: none; padding-top: 4px; }
+
+  .step-num {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 34px;
+    font-weight: 400;
+    color: var(--gold);
+    line-height: 1;
+    padding-top: 2px;
+  }
+  @media (max-width: 560px) {
+    .step { grid-template-columns: 1fr; gap: 6px; }
+    .step-num { font-size: 22px; }
+  }
+
+  .step h3.display {
+    font-size: 21px;
+    font-weight: 400;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+
+  .step p {
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin: 0 0 12px;
+    max-width: 62ch;
+  }
+
+  .step p.try {
+    color: var(--ink);
+  }
+  .step p.try b { color: var(--gold); font-weight: 600; }
+
+  .chiprow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 14px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .chip.link {
+    border-color: var(--gold-dim);
+    background: var(--gold-wash);
+    font-weight: 600;
+  }
+  .chip .k {
+    color: var(--ink-muted);
+    font-weight: 400;
+  }
+
+  .why {
+    display: flex;
+    gap: 10px;
+    background: var(--surface-2);
+    border-inline-start: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    margin-top: 4px;
+  }
+  .why b { color: var(--ink); font-weight: 600; }
+
+  .substeps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 6px 0 16px;
+  }
+  .substeps .sub {
+    display: flex;
+    gap: 10px;
+    font-size: 14.5px;
+    color: var(--ink);
+    align-items: baseline;
+  }
+  .substeps .sub .bullet {
+    flex: none;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 8px;
+  }
+  .substeps .sub .navname {
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  .ai-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 6px 0 4px;
+  }
+  .ai-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .ai-item .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ai-item .head .pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--good);
+    background: color-mix(in srgb, var(--good) 14%, transparent);
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .ai-item .head h4 {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 700;
+  }
+  .ai-item p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .ai-item .where {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+  .ai-item .where .navname { color: var(--gold); font-weight: 600; }
+
+  .note {
+    font-size: 13px;
+    color: var(--ink-muted);
+    background: var(--surface-2);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 10px;
+  }
+
+  /* ===== Category grid (full feature map) ===== */
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 4px 0 16px;
+  }
+  @media (max-width: 640px) {
+    .cat-grid { grid-template-columns: 1fr; }
+  }
+
+  .cat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .cat-card .cat-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .cat-card .cat-icon {
+    font-size: 17px;
+    line-height: 1;
+  }
+  .cat-card .cat-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+  }
+
+  .cat-card .feat {
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+  }
+  .cat-card .feat:first-of-type { border-top: none; padding-top: 0; }
+
+  .cat-card .feat .fname {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .cat-card .feat .fdesc {
+    font-size: 13px;
+    color: var(--ink-muted);
+    display: block;
+  }
+
+  .alert-band {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: linear-gradient(135deg, var(--gold-wash), transparent);
+    border: 1px solid var(--gold-dim);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 4px 0 4px;
+  }
+  .alert-band .bell { font-size: 22px; line-height: 1; padding-top: 2px; }
+  .alert-band h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .alert-band p {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+  }
+
+  /* ===== Footer ===== */
+
+  .footer {
+    margin-top: 54px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .footer .brand {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 15px;
+    color: var(--ink-muted);
+  }
+  .footer .brand b { color: var(--ink); }
+  .footer .meta {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    text-align: right;
+  }
+  @media (max-width: 560px) {
+    .footer { flex-direction: column; align-items: flex-start; }
+    .footer .meta { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <p class="eyebrow">OMNIRA VALET — PLATFORM WALKTHROUGH</p>
+  <h1 class="display">Take a look at what's live.</h1>
+  <p class="lede">Your new system has two connected sites — one for your customers, one for your team — and <strong>everything</strong> that was built for you: the sales pipeline, feedback and referrals, marketing, and every AI feature. This guide walks through all of it in five steps, using real links you can click right now. No technical knowledge needed.</p>
+
+  <div class="doors">
+    <div class="door">
+      <p class="tag">For your customers</p>
+      <h3 class="display">Your Website</h3>
+      <p>The public site — services, pricing, locations, and the forms customers use to reach you or leave a review.</p>
+      <a class="url mono" href="https://greatowear.com" target="_blank" rel="noopener">greatowear.com ↗</a>
+    </div>
+    <div class="door">
+      <p class="tag">For you &amp; your staff</p>
+      <h3 class="display">Your Dashboard</h3>
+      <p>The password-protected side. Every lead, review, and campaign lands here — nothing to copy or re-enter by hand.</p>
+      <a class="url mono" href="https://api.greatowear.com" target="_blank" rel="noopener">api.greatowear.com ↗</a>
+    </div>
+  </div>
+  <p class="note">Note: <b style="color:var(--ink)">greatowear.com</b> is a temporary preview address for you to review everything on. It'll move to your own domain once you're happy with it.</p>
+
+  <div class="rule"></div>
+
+  <p class="section-eyebrow">The walkthrough</p>
+  <h2 class="section-heading display">Five steps, in order</h2>
+
+  <div class="step">
+    <div class="step-num display">1</div>
+    <div>
+      <h3 class="display">Browse the public website</h3>
+      <p>This is your storefront — what a hotel, restaurant, or mall manager sees before they ever call you. Homepage, Services, Locations, Pricing, About.</p>
+      <div class="chiprow">
+        <a class="chip link mono" href="https://greatowear.com" target="_blank" rel="noopener">greatowear.com</a>
+      </div>
+      <p class="try"><b>Try it:</b> click <span class="mono">Contact</span> in the top menu and submit a test message — a fake name and phone number is fine.</p>
+      <div class="why"><span>💡</span><span><b>Why it matters:</b> that submission doesn't sit in an inbox — it becomes a real, trackable lead automatically, the moment it's sent.</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num display">2</div>
+    <div>
+      <h3 class="display">Leave a test review</h3>
+      <p>The public feedback form — any customer can rate their experience and write a comment, any time, no account needed.</p>
+      <div class="chiprow">
+        <a class="chip link mono" href="https://greatowear.com/feedback" target="_blank" rel="noopener">greatowear.com/feedback</a>
+      </div>
+      <p class="try"><b>Try it:</b> give it a low rating (1 or 2 stars) with a complaint-style comment, like <i>"the captain was late."</i></p>
+      <div class="why"><span>💡</span><span><b>Why it matters:</b> an AI reads every review the instant it arrives — not just the star rating, the actual sentence — and decides whether your team needs to know, and how urgently. A 5-star review with a hidden complaint gets caught too, not just the low scores.</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num display">3</div>
+    <div>
+      <h3 class="display">Log into your team's dashboard</h3>
+      <p>This is the side only you and your staff can see. Sign in with the account we've set up for you.</p>
+      <div class="chiprow">
+        <a class="chip link mono" href="https://api.greatowear.com" target="_blank" rel="noopener">api.greatowear.com</a>
+      </div>
+      <p class="try">You'll land on the main <b>Dashboard</b> — calls, visits, and meetings this week, revenue booked, and a leaderboard ranking your sales team by performance.</p>
+      <div class="why"><span>💡</span><span><b>Why it matters:</b> one screen tells you how the business is doing today, without asking anyone for an update.</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num display">4</div>
+    <div>
+      <h3 class="display">Everything in your dashboard, at a glance</h3>
+      <p>Your test message and review from Steps 1–2 are already sitting in here — but this is the whole system, not just those two. Everything below lives in the menu on the left.</p>
+
+      <div class="cat-grid">
+        <div class="cat-card">
+          <div class="cat-head"><span class="cat-icon">📋</span><span class="cat-title">SALES PIPELINE</span></div>
+          <div class="feat"><span class="fname">All Clients</span><span class="fdesc">Every lead, organized by stage — new, contacted, meeting booked, won.</span></div>
+          <div class="feat"><span class="fname">Follow-ups</span><span class="fdesc">Reminds a rep who to call back and when — see the alert band below for what happens if they don't.</span></div>
+          <div class="feat"><span class="fname">Meetings &amp; Quotes</span><span class="fdesc">Book meetings, request special pricing for your approval, all tracked per client.</span></div>
+          <div class="feat"><span class="fname">Content Library</span><span class="fdesc">Ready-made brochures and documents reps can send a client in one click.</span></div>
+        </div>
+
+        <div class="cat-card">
+          <div class="cat-head"><span class="cat-icon">💬</span><span class="cat-title">CUSTOMER VOICE</span></div>
+          <div class="feat"><span class="fname">Website Inquiries</span><span class="fdesc">Every contact-form message from the website, ready to assign to a rep.</span></div>
+          <div class="feat"><span class="fname">Customer Feedback</span><span class="fdesc">AI reads every review the instant it's submitted and flags anything serious — see Step 5.</span></div>
+          <div class="feat"><span class="fname">Testimonials</span><span class="fdesc">Approve real 4–5 star reviews to feature on the public website.</span></div>
+        </div>
+
+        <div class="cat-card">
+          <div class="cat-head"><span class="cat-icon">📈</span><span class="cat-title">GROWTH TOOLS</span></div>
+          <div class="feat"><span class="fname">Referral Rewards</span><span class="fdesc">Give a happy client a code to share. When someone new signs up with it, the referrer automatically earns points the moment that deal closes.</span></div>
+          <div class="feat"><span class="fname">Marketing</span><span class="fdesc">Write and send email or SMS campaigns to any group of leads, schedule them for later, and see who opened or clicked.</span></div>
+          <div class="feat"><span class="fname">Post-deal surveys</span><span class="fdesc">Every new client automatically gets a "how did we do?" text a few days after their deal closes — no one has to remember.</span></div>
+        </div>
+
+        <div class="cat-card">
+          <div class="cat-head"><span class="cat-icon">👥</span><span class="cat-title">STAFF &amp; REPORTING</span></div>
+          <div class="feat"><span class="fname">Staff &amp; Targets</span><span class="fdesc">Set daily and weekly goals for each rep, see who's hitting them.</span></div>
+          <div class="feat"><span class="fname">Leaderboard</span><span class="fdesc">Ranks your team by deals closed on the main Dashboard, and quietly flags anyone who might need coaching.</span></div>
+          <div class="feat"><span class="fname">Weekly Report</span><span class="fdesc">A written, plain-language summary of a rep's week — see Step 5.</span></div>
+        </div>
+      </div>
+
+      <div class="alert-band">
+        <span class="bell">🔔</span>
+        <div>
+          <h4>The bell icon — every alert, one place</h4>
+          <p>An overdue follow-up, a seriously unhappy review, a new website inquiry nobody's claimed yet — none of it waits for someone to go looking. It lands in the notification bell, and for anything genuinely serious (like a flagged complaint), the system keeps re-alerting your manager on repeat until someone actually deals with it, not just once.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num display">5</div>
+    <div>
+      <h3 class="display">See the AI actually at work</h3>
+      <p>Four specific places the system is doing work for you, in plain terms:</p>
+
+      <div class="ai-list">
+        <div class="ai-item">
+          <div class="head"><span class="pill">Feedback</span><h4>Reads the words, not just the star rating</h4></div>
+          <p>The moment a review comes in — like the one you left in Step 2 — the AI reads the actual sentence, not just the number of stars, and decides how serious it is. Even a 5-star review with a buried complaint gets caught, and it's written up in Arabic and English with a suggested next step.</p>
+          <p class="where">Find it under <span class="navname">Customer Feedback</span> in the dashboard.</p>
+        </div>
+        <div class="ai-item">
+          <div class="head"><span class="pill">Calls</span><h4>Every sales call, summarized automatically</h4></div>
+          <p>Once your phone line is connected, the AI listens to each recorded call, writes a summary, and scores how likely that customer is to sign — so a manager can review a call in 10 seconds instead of listening to all of it.</p>
+          <p class="where">Find it under <span class="navname">Call Intelligence</span> in the dashboard.</p>
+        </div>
+        <div class="ai-item">
+          <div class="head"><span class="pill">Meetings</span><h4>One line of notes becomes a full recap</h4></div>
+          <p>When a rep finishes a meeting, they jot a single quick note. The AI turns that into a clean summary — the client's mood and a recommended next step — saved directly on that client's file.</p>
+          <p class="where">Appears automatically inside any client's record after a meeting is marked done.</p>
+        </div>
+        <div class="ai-item">
+          <div class="head"><span class="pill">Reports</span><h4>A written summary of each rep's week</h4></div>
+          <p>Instead of reading raw numbers, click one button to get a short written narrative of how a rep's week went, plus specific, concrete coaching advice.</p>
+          <p class="where">Find the <span class="navname">Generate AI Summary</span> button on the <span class="navname">Weekly Report</span> page.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <p class="note">One thing still pending: sending actual WhatsApp messages needs Meta's approval for a Business API number, which is in progress on your end. Everything else — the queue, the templates, the triggers — is already built and will switch on the moment that approval comes through.</p>
+
+  <div class="footer">
+    <div class="brand">Built for <b>Omnira Valet</b> by GreatoDeal AI Automation Solutions</div>
+    <div class="meta">Questions about anything above?<br>Just reply and we'll walk through it together.</div>
+  </div>
+
+</div>
+</body>
+</html>

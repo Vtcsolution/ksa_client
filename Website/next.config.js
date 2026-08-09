@@ -33,6 +33,13 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
+  async rewrites() {
+    return [
+      // Client-facing platform walkthrough — a static page, not part of the
+      // Next.js app itself (see public/welcome.html).
+      { source: '/welcome', destination: '/welcome.html' },
+    ];
+  },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
