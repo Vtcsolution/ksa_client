@@ -5,7 +5,7 @@ import { mapLead, mapSegment, mapUser, type LeadWithRelations } from "./mappers"
 
 type Client = SupabaseClient<Database>;
 
-const LEAD_SELECT = "*, calls(*), visits(*), meetings(*), quotes(*), contracts(*), activity_log(*)";
+const LEAD_SELECT = "*, calls(*), visits(*), meetings(*), quotes(*), contracts(*), activity_log(*), followup_messages(*)";
 
 export async function fetchLeads(supabase: Client): Promise<Lead[]> {
   const { data, error } = await supabase.from("leads").select(LEAD_SELECT).order("updated_at", { ascending: false });

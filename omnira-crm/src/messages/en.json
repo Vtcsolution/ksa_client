@@ -836,7 +836,8 @@
     "ziwoCallAnalyzed": "Call analysis ready — lead score {score}, sentiment: {sentiment}",
     "ziwoLeadCreated": "New lead from a Ziwo call: {phone} — needs assignment",
     "followupEscalated": "Follow-up with \"{name}\" is {hours}h+ overdue — auto-escalated",
-    "websiteFeedbackAlert": "Website feedback from {name} needs attention — {pct}% severity"
+    "websiteFeedbackAlert": "Website feedback from {name} needs attention — {pct}% severity",
+    "urgentLeadFollowup": "\"{name}\" scored {score}/100 — call now, don't wait for automation"
   },
   "leadCard": {
     "transferredBadge": "Transferred from {from}",
@@ -1163,6 +1164,27 @@
     "staffAdded": "{name} added — you can configure their permissions now",
     "copiedToClipboard": "Copied to clipboard"
   },
+  "followupCadence": {
+    "tier": {
+      "cold": "Cold",
+      "warm": "Warm",
+      "hot": "Hot",
+      "urgent": "Urgent"
+    },
+    "theme": {
+      "check_in": "Check-in",
+      "share_content": "Shared content",
+      "final_nurture": "Final nurture",
+      "follow_up": "Follow-up",
+      "handle_objection": "Objection handling",
+      "special_offer": "Special offer",
+      "same_day_note": "Same-day note",
+      "testimonial": "Testimonial",
+      "push_to_book": "Meeting push"
+    },
+    "queued": "Queued",
+    "messagesTitle": "AI Follow-Up Messages"
+  },
   "log": {
     "distributedTo": "Client distributed to {name}",
     "calledDuration": "Called the client · duration {dur}",
@@ -1201,7 +1223,8 @@
     "ziwoCallLogged": "Ziwo call · {direction} · {result} · duration {dur}",
     "ziwoCallAnalyzed": "AI call analysis ready · lead score {score} · {sentiment}",
     "whatsappFollowupQueued": "WhatsApp follow-up queued: \"{message}\"",
-    "meetingSummarized": "AI meeting recap ready · {sentiment}"
+    "meetingSummarized": "AI meeting recap ready · {sentiment}",
+    "tierFollowupQueued": "Follow-up queued · {tier} · {theme}"
   },
   "empty": {
     "noReminders": "No reminders now — any upcoming appointment within 24h shows here"

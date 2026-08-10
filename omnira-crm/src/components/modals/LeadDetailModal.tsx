@@ -62,6 +62,7 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
   const tDate = useTranslations("dateHelpers");
   const tLeadCard = useTranslations("leadCard");
   const tSentiment = useTranslations("callsPage.sentiment");
+  const tFollowup = useTranslations("followupCadence");
   const locale = useLocale();
 
   const closeModal = useUiStore((s) => s.closeModal);
@@ -281,6 +282,9 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
 
       {/* annotation chips */}
       <div className="lead-meta-chips">
+        {lead.status !== "won" && lead.status !== "archived" && lead.followupTier && (
+          <Chip cls={`tier-${lead.followupTier}`}>{tFollowup(`tier.${lead.followupTier}`)}</Chip>
+        )}
         {lead.status === "followup" && lead.followupEscalated && (
           <Chip cls="archived">
             <AlertTriangle size={11} strokeWidth={2} />
@@ -385,6 +389,25 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
               {t("nextStepsLabel")}: {locale === "ar" ? lead.meeting.nextStepsAr : lead.meeting.nextStepsEn}
             </p>
           )}
+        </div>
+      )}
+
+      {lead.followupMessages.length > 0 && (
+        <div className="panel" style={{ marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: "var(--gold-l)", marginBottom: 8 }}>
+            <Sparkles size={13} strokeWidth={1.9} />
+            {tFollowup("messagesTitle")}
+          </div>
+          {lead.followupMessages.slice(0, 5).map((m) => (
+            <div key={m.id} style={{ marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid var(--line)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                <Chip cls={`tier-${m.tier}`}>{tFollowup(`tier.${m.tier}`)}</Chip>
+                <span style={{ fontSize: 11, color: "var(--muted)" }}>{tFollowup(`theme.${m.theme}`)}</span>
+                <span style={{ fontSize: 11, color: "var(--muted)" }}>· {m.status === "queued" ? tFollowup("queued") : m.status}</span>
+              </div>
+              <p style={{ fontSize: 12, color: "var(--cream2)", lineHeight: 1.6 }}>{locale === "ar" ? m.messageAr : m.messageEn}</p>
+            </div>
+          ))}
         </div>
       )}
 

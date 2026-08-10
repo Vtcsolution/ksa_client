@@ -177,6 +177,17 @@ export default function NotifBell() {
           text: t("followupEscalated", { name: lead ? resolveLeadName(lead, locale) : "", hours: Number(n.params.hoursOverdue ?? 0) }),
           onOpen: () => markNotificationRead(n.id),
         });
+      } else if (n.kind === "urgentLeadFollowup") {
+        const lead = leads.find((l) => l.id === n.leadId);
+        out.push({
+          id: n.id,
+          dt: n.at,
+          leadId: n.leadId,
+          urgent: n.urgent,
+          icon: AlertTriangle,
+          text: t("urgentLeadFollowup", { name: lead ? resolveLeadName(lead, locale) : "", score: Number(n.params.leadScore ?? 0) }),
+          onOpen: () => markNotificationRead(n.id),
+        });
       }
     }
 

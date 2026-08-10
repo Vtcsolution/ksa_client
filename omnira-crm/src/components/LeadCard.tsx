@@ -24,6 +24,7 @@ export default function LeadCard({ lead, index = 0 }: { lead: Lead; index?: numb
   const t = useTranslations("leadCard");
   const tUsers = useTranslations("users");
   const tDate = useTranslations("dateHelpers");
+  const tFollowup = useTranslations("followupCadence");
   const locale = useLocale();
   const users = useAppStore((s) => s.users);
   const currentUserId = useAppStore((s) => s.currentUserId);
@@ -48,6 +49,9 @@ export default function LeadCard({ lead, index = 0 }: { lead: Lead; index?: numb
           <div className="lc-meta">
             <SegmentChip segmentId={lead.segment} />
             <span className="lc-phone">{lead.phone}</span>
+            {!closed && lead.followupTier && (
+              <span className={`chip tier-${lead.followupTier}`}>{tFollowup(`tier.${lead.followupTier}`)}</span>
+            )}
             {recentlyTransferred && (
               <span className="chip followup">
                 <ArrowLeftRight size={11} strokeWidth={2} />

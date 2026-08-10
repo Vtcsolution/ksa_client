@@ -44,6 +44,17 @@ export interface MeetingRecord {
   sentiment?: "positive" | "neutral" | "negative";
 }
 
+export interface FollowupMessageRecord {
+  id: string;
+  tier: "cold" | "warm" | "hot";
+  step: number;
+  theme: string;
+  messageAr: string;
+  messageEn: string;
+  status: string;
+  at: number;
+}
+
 export interface DiscountRecord {
   official: number;
   given: number;
@@ -91,6 +102,8 @@ export interface Lead {
   meeting: MeetingRecord | null;
   followupDt: string | null;
   followupEscalated?: boolean;
+  followupTier?: "cold" | "warm" | "hot" | "urgent";
+  followupMessages: FollowupMessageRecord[];
   result: "won" | "archived" | null;
   resultReasonKey: string | null; // reason key or free text (prefixed "custom:")
   notes: string;

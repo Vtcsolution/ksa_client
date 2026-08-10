@@ -2415,6 +2415,24 @@
     color: var(--danger);
   }
 
+  /* follow-up tier chips */
+  .chip.tier-cold {
+    background: var(--blue-bg);
+    color: var(--blue);
+  }
+  .chip.tier-warm {
+    background: var(--gold-bg);
+    color: var(--gold-l);
+  }
+  .chip.tier-hot {
+    background: var(--warn-bg);
+    color: var(--warn);
+  }
+  .chip.tier-urgent {
+    background: var(--danger-bg);
+    color: var(--danger-l);
+  }
+
   /* score gauge */
   .score-gauge {
     flex: 0 0 auto;

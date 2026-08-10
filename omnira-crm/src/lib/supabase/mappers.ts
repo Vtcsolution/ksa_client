@@ -3,7 +3,7 @@
 // modal, and component keeps working against the exact same shapes as
 // the old mock store — only useAppStore's internals changed.
 
-import type { CallRecord, Lead, LogEntry, MeetingRecord, PendingQuote, Segment, User, VisitRecord } from "@/lib/types";
+import type { CallRecord, FollowupMessageRecord, Lead, LogEntry, MeetingRecord, PendingQuote, Segment, User, VisitRecord } from "@/lib/types";
 import type { Database } from "./database.types";
 
 type LeadRow = Database["public"]["Tables"]["leads"]["Row"];
@@ -13,6 +13,7 @@ type MeetingRow = Database["public"]["Tables"]["meetings"]["Row"];
 type QuoteRow = Database["public"]["Tables"]["quotes"]["Row"];
 type ContractRow = Database["public"]["Tables"]["contracts"]["Row"];
 type ActivityRow = Database["public"]["Tables"]["activity_log"]["Row"];
+type FollowupMessageRow = Database["public"]["Tables"]["followup_messages"]["Row"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type TargetRow = Database["public"]["Tables"]["targets"]["Row"];
 type SegmentRow = Database["public"]["Tables"]["segments"]["Row"];
@@ -25,7 +26,24 @@ export type LeadWithRelations = LeadRow & {
   quotes: QuoteRow[] | null;
   contracts: ContractRow[] | null;
   activity_log: ActivityRow[] | null;
+  followup_messages: FollowupMessageRow[] | null;
 };
+
+function mapFollowupMessages(rows: FollowupMessageRow[] | null): FollowupMessageRecord[] {
+  if (!rows) return [];
+  return [...rows]
+    .sort((a, b) => ms(b.created_at) - ms(a.created_at))
+    .map((r) => ({
+      id: r.id,
+      tier: r.tier as FollowupMessageRecord["tier"],
+      step: r.step,
+      theme: r.theme,
+      messageAr: r.message_ar,
+      messageEn: r.message_en,
+      status: r.status,
+      at: ms(r.created_at),
+    }));
+}
 
 const ms = (iso: string | null) => (iso ? new Date(iso).getTime() : 0);
 
@@ -102,6 +120,8 @@ export function mapLead(row: LeadWithRelations): Lead {
     // followupDt — a later reschedule (newer dt, no fresh escalation yet)
     // must read as not-escalated again.
     followupEscalated: !!(followupDt && row.followup_escalated_at && ms(row.followup_escalated_at) >= ms(followupDt)),
+    followupTier: row.followup_tier ?? undefined,
+    followupMessages: mapFollowupMessages(row.followup_messages),
     result: (row.result as Lead["result"]) ?? null,
     resultReasonKey: row.result_reason_key,
     notes: row.notes,

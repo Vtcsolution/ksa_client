@@ -14,6 +14,7 @@ export type DbContractVia = "meeting" | "direct";
 export type DbCallInsightStatus = "processing" | "analyzed";
 export type DbCallSentiment = "positive" | "neutral" | "negative";
 export type DbBuyingIntent = "low" | "medium" | "high";
+export type DbFollowupTier = "cold" | "warm" | "hot" | "urgent";
 
 export interface Database {
   public: {
@@ -88,11 +89,38 @@ export interface Database {
           referral_code: string | null;
           referred_by_code: string | null;
           followup_escalated_at: string | null;
+          followup_tier: DbFollowupTier | null;
+          followup_tier_updated_at: string | null;
+          followup_cadence_started_at: string | null;
+          followup_step: number;
           created_at: string;
           updated_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["leads"]["Row"]> & { name: string; phone: string };
         Update: Partial<Database["public"]["Tables"]["leads"]["Row"]>;
+        Relationships: [];
+      };
+      followup_messages: {
+        Row: {
+          id: string;
+          lead_id: string;
+          tier: string;
+          step: number;
+          theme: string;
+          message_ar: string;
+          message_en: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["followup_messages"]["Row"]> & {
+          lead_id: string;
+          tier: string;
+          step: number;
+          theme: string;
+          message_ar: string;
+          message_en: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["followup_messages"]["Row"]>;
         Relationships: [];
       };
       calls: {

@@ -19,6 +19,7 @@ export function useLogLineText(entry: LogEntry): string {
   const tCallModal = useTranslations("callModal");
   const tLeadCard = useTranslations("leadCard");
   const tSentiment = useTranslations("callsPage.sentiment");
+  const tFollowup = useTranslations("followupCadence");
   const tDate = useTranslations("dateHelpers");
   const users = useAppStore((s) => s.users);
   const segments = useAppStore((s) => s.segments);
@@ -134,6 +135,9 @@ export function useLogLineText(entry: LogEntry): string {
       const sentimentKey = String(p.sentiment ?? "");
       const sentiment = ["positive", "neutral", "negative"].includes(sentimentKey) ? tSentiment(sentimentKey) : sentimentKey;
       return t("meetingSummarized", { sentiment });
+    }
+    case "tierFollowupQueued": {
+      return t("tierFollowupQueued", { tier: tFollowup(`tier.${String(p.tier ?? "")}`), theme: tFollowup(`theme.${String(p.theme ?? "")}`) });
     }
     case "whatsappFollowupQueued": {
       const message = locale === "ar" ? String(p.messageAr ?? "") : String(p.messageEn ?? "");

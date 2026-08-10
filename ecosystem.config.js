@@ -48,6 +48,15 @@ module.exports = {
       env: { NODE_ENV: 'production' },
     },
     {
+      name: 'omnira-crm-followups-cadence',
+      cwd: './omnira-crm',
+      script: 'npx',
+      args: 'tsx scripts/followup-cadence-loop.ts',
+      instances: 1,
+      exec_mode: 'fork',
+      env: { NODE_ENV: 'production' },
+    },
+    {
       name: 'omnira-website',
       cwd: './Website',
       script: 'npm',

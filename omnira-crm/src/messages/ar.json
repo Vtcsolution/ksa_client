@@ -836,7 +836,8 @@
     "ziwoCallAnalyzed": "تحليل المكالمة جاهز — نقاط العميل {score}، المشاعر: {sentiment}",
     "ziwoLeadCreated": "عميل جديد من مكالمة زيوو: {phone} — يحتاج تعيين",
     "followupEscalated": "متابعة «{name}» تجاوزت {hours} ساعة دون رد — صُعّدت تلقائياً",
-    "websiteFeedbackAlert": "ملاحظة من {name} على الموقع تحتاج متابعة — خطورة {pct}٪"
+    "websiteFeedbackAlert": "ملاحظة من {name} على الموقع تحتاج متابعة — خطورة {pct}٪",
+    "urgentLeadFollowup": "«{name}» سجّل {score}/100 — اتصلوا الآن، لا تنتظروا الأتمتة"
   },
   "leadCard": {
     "transferredBadge": "محوّل من {from}",
@@ -1163,6 +1164,27 @@
     "staffAdded": "أُضيف {name} — يمكنك ضبط صلاحياته الآن",
     "copiedToClipboard": "نُسخ إلى الحافظة"
   },
+  "followupCadence": {
+    "tier": {
+      "cold": "بارد",
+      "warm": "دافئ",
+      "hot": "ساخن",
+      "urgent": "عاجل"
+    },
+    "theme": {
+      "check_in": "تواصل بسيط",
+      "share_content": "محتوى مشارك",
+      "final_nurture": "تذكير أخير",
+      "follow_up": "متابعة",
+      "handle_objection": "معالجة اعتراض",
+      "special_offer": "عرض خاص",
+      "same_day_note": "ملاحظة فورية",
+      "testimonial": "شهادة عميل",
+      "push_to_book": "دفع لحجز اجتماع"
+    },
+    "queued": "بانتظار الإرسال",
+    "messagesTitle": "رسائل المتابعة بالذكاء الاصطناعي"
+  },
   "log": {
     "distributedTo": "وزّع العميل لـ{name}",
     "calledDuration": "اتصل بالعميل · المدة {dur}",
@@ -1201,7 +1223,8 @@
     "ziwoCallLogged": "مكالمة عبر Ziwo · {direction} · {result} · المدة {dur}",
     "ziwoCallAnalyzed": "تحليل الذكاء الاصطناعي جاهز · نقاط العميل {score} · {sentiment}",
     "whatsappFollowupQueued": "جدولة متابعة واتساب: «{message}»",
-    "meetingSummarized": "ملخص الاجتماع بالذكاء الاصطناعي جاهز · {sentiment}"
+    "meetingSummarized": "ملخص الاجتماع بالذكاء الاصطناعي جاهز · {sentiment}",
+    "tierFollowupQueued": "جدولة رسالة متابعة · {tier} · {theme}"
   },
   "empty": {
     "noReminders": "لا تذكيرات الآن — كل موعد قادم خلال ٢٤ ساعة يظهر هنا"

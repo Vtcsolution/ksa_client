@@ -4,6 +4,7 @@ import { getOpenAI } from "@/lib/openai/client";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getRecordingSignedUrl } from "./callHistory";
 import type { DbBuyingIntent, DbCallSentiment } from "@/lib/supabase/database.types";
+import { computeTier } from "@/lib/followupCadence";
 
 // Structured output schema the analysis model must return. Kept in lockstep
 // with call_insights' columns (src/lib/supabase/database.types.ts) —
@@ -154,6 +155,41 @@ export async function analyzeZiwoCall(params: { ziwoCallId: string; leadId: stri
           params: { leadScore: analysis.lead_score, sentiment: analysis.sentiment },
           urgent: analysis.lead_score >= 75,
         });
+      }
+
+      // Fresh signal on this lead — re-sort into a tier and restart the
+      // follow-up cadence from day zero (see followupCadence.ts). A rep's
+      // manual notes/status changes don't do this; only a new AI-scored
+      // call does, since that's the one signal strong enough to justify
+      // throwing away cadence progress.
+      const tier = computeTier(analysis.lead_score);
+      const now = new Date().toISOString();
+      // Urgent has no touchpoint list (see CADENCE) — step is set to 1
+      // purely so it never reads as "cadence not started" anywhere else;
+      // the sweep skips urgent tier leads outright, see followupCadence.ts.
+      await supabase
+        .from("leads")
+        .update({ followup_tier: tier, followup_tier_updated_at: now, followup_cadence_started_at: now, followup_step: tier === "urgent" ? 1 : 0 })
+        .eq("id", leadId);
+
+      // Urgent skips the automated cadence entirely — this is the one place
+      // it's triggered, fired immediately rather than waiting for the next
+      // cadence sweep, since "urgent" only means something if it's fast.
+      if (tier === "urgent") {
+        const { data: managers } = await supabase.from("profiles").select("id").eq("role", "manager");
+        const recipients = new Set<string>((managers ?? []).map((m) => m.id));
+        if (repId) recipients.add(repId);
+        if (recipients.size > 0) {
+          await supabase.from("notifications").insert(
+            Array.from(recipients).map((userId) => ({
+              user_id: userId,
+              lead_id: leadId,
+              kind: "urgentLeadFollowup",
+              params: { leadScore: analysis.lead_score },
+              urgent: true,
+            })),
+          );
+        }
       }
     }
 
