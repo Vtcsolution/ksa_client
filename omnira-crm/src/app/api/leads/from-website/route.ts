@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isPhoneLike, normPhone } from "@/lib/phone";
+import { computeTier } from "@/lib/followupCadence";
+import { analyzeWebsiteLead } from "@/lib/openai/websiteLeadScore";
 
 /**
  * Called by the Website the moment a real contact-form submission is saved
@@ -76,6 +78,39 @@ export async function POST(request: NextRequest) {
         urgent: false,
       })),
     );
+  }
+
+  // AI reads the message itself (not just phone/email) to sort this lead
+  // into the right tier immediately — same idea as Ziwo's call analysis
+  // (ziwo/analysis.ts), just scored from written words instead of a
+  // transcript. Best-effort: a scoring failure leaves the lead tier-less,
+  // which the cadence sweep already treats as Cold by default.
+  const scored = await analyzeWebsiteLead(payload.message ?? "", payload.service);
+  if (scored) {
+    const tier = computeTier(scored.leadScore);
+    const now = new Date().toISOString();
+    await admin
+      .from("leads")
+      .update({ followup_tier: tier, followup_tier_updated_at: now, followup_cadence_started_at: now, followup_step: tier === "urgent" ? 1 : 0 })
+      .eq("id", created.id);
+    await admin.from("activity_log").insert({
+      lead_id: created.id,
+      who_id: null,
+      key: "websiteLeadScored",
+      params: { leadScore: scored.leadScore, tier },
+    });
+
+    if (tier === "urgent" && managers && managers.length > 0) {
+      await admin.from("notifications").insert(
+        managers.map((m) => ({
+          user_id: m.id,
+          lead_id: created.id,
+          kind: "urgentLeadFollowup",
+          params: { leadScore: scored.leadScore },
+          urgent: true,
+        })),
+      );
+    }
   }
 
   return NextResponse.json({ ok: true, leadId: created.id, created: true });

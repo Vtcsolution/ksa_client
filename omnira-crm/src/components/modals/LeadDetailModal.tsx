@@ -284,8 +284,8 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
 
       {/* annotation chips */}
       <div className="lead-meta-chips">
-        {lead.status !== "won" && lead.status !== "archived" && lead.followupTier && (
-          <Chip cls={`tier-${lead.followupTier}`}>{tFollowup(`tier.${lead.followupTier}`)}</Chip>
+        {lead.status !== "won" && lead.status !== "archived" && (
+          <Chip cls={`tier-${lead.followupTier ?? "cold"}`}>{tFollowup(`tier.${lead.followupTier ?? "cold"}`)}</Chip>
         )}
         {lead.status === "followup" && lead.followupEscalated && (
           <Chip cls="archived">

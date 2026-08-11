@@ -1241,6 +1241,7 @@
     "whatsappFollowupQueued": "جدولة متابعة واتساب: «{message}»",
     "meetingSummarized": "ملخص الاجتماع بالذكاء الاصطناعي جاهز · {sentiment}",
     "tierFollowupQueued": "جدولة رسالة متابعة · {tier} · {theme}",
+    "websiteLeadScored": "قيّم الذكاء الاصطناعي هذا الاستفسار · {score}/100 · صُنّف كـ {tier}",
     "followupCadenceExhausted": "اكتملت سلسلة المتابعة ({tier}) · لا رد بعد",
     "followupCadenceRestarted": "أُعيد تشغيل المتابعة يدويًا من بارد"
   },

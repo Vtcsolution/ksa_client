@@ -49,8 +49,8 @@ export default function LeadCard({ lead, index = 0 }: { lead: Lead; index?: numb
           <div className="lc-meta">
             <SegmentChip segmentId={lead.segment} />
             <span className="lc-phone">{lead.phone}</span>
-            {!closed && lead.followupTier && (
-              <span className={`chip tier-${lead.followupTier}`}>{tFollowup(`tier.${lead.followupTier}`)}</span>
+            {!closed && (
+              <span className={`chip tier-${lead.followupTier ?? "cold"}`}>{tFollowup(`tier.${lead.followupTier ?? "cold"}`)}</span>
             )}
             {recentlyTransferred && (
               <span className="chip followup">

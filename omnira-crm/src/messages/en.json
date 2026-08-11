@@ -1241,6 +1241,7 @@
     "whatsappFollowupQueued": "WhatsApp follow-up queued: \"{message}\"",
     "meetingSummarized": "AI meeting recap ready · {sentiment}",
     "tierFollowupQueued": "Follow-up queued · {tier} · {theme}",
+    "websiteLeadScored": "AI scored this inquiry · {score}/100 · sorted as {tier}",
     "followupCadenceExhausted": "Follow-up sequence complete ({tier}) · no response yet",
     "followupCadenceRestarted": "Follow-up manually restarted from Cold"
   },

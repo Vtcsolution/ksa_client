@@ -44,7 +44,7 @@ export const CADENCE: Record<Exclude<FollowupTier, "urgent">, Touchpoint[]> = {
     { day: 90, theme: "final_nurture" },
   ],
   hot: [
-    { day: 1, theme: "same_day_note" },
+    { day: 0, theme: "same_day_note" },
     { day: 3, theme: "testimonial" },
     { day: 6, theme: "push_to_book" },
     { day: 15, theme: "handle_objection" },
