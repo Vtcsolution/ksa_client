@@ -80,7 +80,7 @@ interface AppState {
     input: { name: string; phone: string; segment: string },
     actorId: string,
   ) => Promise<{ ok: true } | { ok: false; error: "duplicate" | "invalid"; existingName?: string }>;
-  updateLeadCore: (leadId: string, patch: { name: string; phone: string; segment: string; location: string }) => Promise<void>;
+  updateLeadCore: (leadId: string, patch: { name: string; phone: string; email?: string; segment: string; location: string }) => Promise<void>;
   deleteLead: (leadId: string) => Promise<void>;
   reopenLead: (leadId: string) => Promise<void>;
 

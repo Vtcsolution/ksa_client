@@ -9,6 +9,50 @@ interface TestimonialHit {
   quote?: string;
 }
 
+const THEME_SUBJECT: Record<string, string> = {
+  check_in: "Just checking in — Omnira Valet",
+  share_content: "Something that might help — Omnira Valet",
+  value_reminder: "A quick reminder — Omnira Valet",
+  reengage: "Still here whenever you're ready — Omnira Valet",
+  special_offer: "A time-limited offer for you — Omnira Valet",
+  final_nurture: "Reach out anytime — Omnira Valet",
+  follow_up: "Following up — Omnira Valet",
+  handle_objection: "A quick answer to your question — Omnira Valet",
+  same_day_note: "Great speaking with you — Omnira Valet",
+  testimonial: "What other clients are saying — Omnira Valet",
+  push_to_book: "Ready to move forward? — Omnira Valet",
+};
+
+/**
+ * Best-effort email side of a touchpoint — fired alongside the WhatsApp
+ * queue whenever the lead has an email on file (see lead.email). Uses the
+ * same shared-secret pattern as every other CRM<->Website call; a missing
+ * WEBSITE_URL/secret or an unreachable Website just means no email, never a
+ * failed sweep.
+ */
+async function sendFollowupEmail(email: string, theme: string, messageEn: string): Promise<void> {
+  const websiteUrl = process.env.WEBSITE_URL;
+  const secret = process.env.FEEDBACK_SYNC_SECRET;
+  if (!websiteUrl || !secret) return;
+
+  const subject = THEME_SUBJECT[theme] ?? "A message from Omnira Valet";
+  const html = `<div style="font-family:sans-serif;font-size:15px;line-height:1.6;color:#222;">${messageEn
+    .split("\n")
+    .map((line) => `<p>${line}</p>`)
+    .join("")}</div>`;
+
+  try {
+    await fetch(`${websiteUrl}/api/marketing/send-followup-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-secret": secret },
+      body: JSON.stringify({ to: email, subject, html }),
+      signal: AbortSignal.timeout(10000),
+    });
+  } catch {
+    // best-effort — the WhatsApp queue entry already succeeded regardless
+  }
+}
+
 /** Best-effort — a missing/unreachable Website just means no testimonial gets woven in, not a failed sweep. */
 async function fetchMatchingTestimonialQuote(segmentSlug: string | null): Promise<string | undefined> {
   if (!segmentSlug) return undefined;
@@ -58,7 +102,7 @@ export async function runFollowupCadenceSweep(): Promise<CadenceSweepResult> {
 
   const { data: leads, error: leadsErr } = await admin
     .from("leads")
-    .select("id, name, name_en, notes, segment_id, followup_tier, followup_cadence_started_at, followup_step, followup_dormant_at, created_at, status")
+    .select("id, name, name_en, email, notes, segment_id, followup_tier, followup_cadence_started_at, followup_step, followup_dormant_at, created_at, status")
     .neq("status", "won")
     .neq("status", "archived");
   if (leadsErr) return { ok: false, scanned: 0, sent: 0, dormant: 0, errors: [leadsErr.message] };
@@ -139,6 +183,9 @@ export async function runFollowupCadenceSweep(): Promise<CadenceSweepResult> {
       });
 
       await admin.from("leads").update({ followup_step: lead.followup_step + 1 }).eq("id", lead.id);
+
+      if (lead.email) await sendFollowupEmail(lead.email, touchpoint.theme, draft.en);
+
       sent++;
     } catch (err) {
       errors.push(`${lead.id}: ${err instanceof Error ? err.message : "failed"}`);

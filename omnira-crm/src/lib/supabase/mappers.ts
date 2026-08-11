@@ -107,6 +107,7 @@ export function mapLead(row: LeadWithRelations): Lead {
     name: row.name,
     nameEn: row.name_en ?? undefined,
     phone: row.phone,
+    email: row.email ?? undefined,
     location: row.location,
     segment: row.segment_id ?? "",
     source: row.source,

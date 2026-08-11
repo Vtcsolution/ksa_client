@@ -871,6 +871,8 @@
     "referralCode": "Referral Code",
     "escalatedChip": "Escalated — overdue follow-up",
     "similarTestimonials": "Similar client testimonials",
+    "emailLabel": "Email (optional)",
+    "emailHint": "Used to also send follow-up messages by email, alongside WhatsApp",
     "referredByCodeLabel": "Referred by code (from website lead, cross-checked)",
     "fromField": "Field",
     "fromExcel": "From Excel",

@@ -69,6 +69,7 @@ export interface Database {
           name: string;
           name_en: string | null;
           phone: string;
+          email: string | null;
           location: string;
           segment_id: string | null;
           source: DbLeadSource;

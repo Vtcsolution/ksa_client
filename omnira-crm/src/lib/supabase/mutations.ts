@@ -153,11 +153,17 @@ export async function addFieldLead(
 export async function updateLeadCore(
   supabase: Client,
   leadId: string,
-  patch: { name: string; phone: string; segment: string; location: string },
+  patch: { name: string; phone: string; email?: string; segment: string; location: string },
   actorId: string,
 ) {
   if (!isPhoneLike(patch.phone)) throw new Error("Invalid phone number");
-  await touchLead(supabase, leadId, { name: patch.name, phone: normPhone(patch.phone), segment_id: patch.segment, location: patch.location });
+  await touchLead(supabase, leadId, {
+    name: patch.name,
+    phone: normPhone(patch.phone),
+    email: patch.email?.trim() || null,
+    segment_id: patch.segment,
+    location: patch.location,
+  });
   await logActivity(supabase, leadId, actorId, "managerEdited");
 }
 

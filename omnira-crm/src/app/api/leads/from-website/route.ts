@@ -41,15 +41,20 @@ export async function POST(request: NextRequest) {
   const admin = createAdminClient();
   const phone = normPhone(payload.phone);
 
-  const notesLines = [payload.service ? `Service: ${payload.service}` : "", payload.email ? `Email: ${payload.email}` : "", payload.message ?? ""].filter(Boolean);
+  const notesLines = [payload.service ? `Service: ${payload.service}` : "", payload.message ?? ""].filter(Boolean);
+  const email = payload.email?.trim() || null;
 
-  const { data: existing, error: findErr } = await admin.from("leads").select("id").eq("phone", phone).maybeSingle();
+  const { data: existing, error: findErr } = await admin.from("leads").select("id, email").eq("phone", phone).maybeSingle();
   if (findErr) return NextResponse.json({ error: findErr.message }, { status: 500 });
-  if (existing) return NextResponse.json({ ok: true, leadId: existing.id, created: false });
+  if (existing) {
+    // A later submission with an email we didn't have yet is still worth capturing.
+    if (email && !existing.email) await admin.from("leads").update({ email }).eq("id", existing.id);
+    return NextResponse.json({ ok: true, leadId: existing.id, created: false });
+  }
 
   const { data: created, error: createErr } = await admin
     .from("leads")
-    .insert({ name: payload.name.trim(), phone, source: "website", status: "new", notes: notesLines.join("\n") })
+    .insert({ name: payload.name.trim(), phone, email, source: "website", status: "new", notes: notesLines.join("\n") })
     .select("id")
     .single();
 

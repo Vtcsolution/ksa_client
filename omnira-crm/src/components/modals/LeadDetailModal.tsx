@@ -95,6 +95,7 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
 
   const [editName, setEditName] = useState(lead?.name ?? "");
   const [editPhone, setEditPhone] = useState(lead?.phone ?? "");
+  const [editEmail, setEditEmail] = useState(lead?.email ?? "");
   const [editSegment, setEditSegment] = useState(lead?.segment ?? "");
   const [editLocation, setEditLocation] = useState(lead?.location ?? "");
   const [editReferredByCode, setEditReferredByCode] = useState(lead?.referredByCode ?? "");
@@ -143,7 +144,7 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
       pushToast("enterNameAndPhone", undefined, "warn");
       return;
     }
-    updateLeadCore(leadId, { name: editName, phone: editPhone, segment: editSegment, location: editLocation });
+    updateLeadCore(leadId, { name: editName, phone: editPhone, email: editEmail, segment: editSegment, location: editLocation });
     if (editReferredByCode.trim().toUpperCase() !== (lead?.referredByCode ?? "")) {
       setReferredByCode(leadId, editReferredByCode);
     }
@@ -567,6 +568,15 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
                   <TextInput value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
                 </Frow>
               </Frow2>
+              <Frow label={t("emailLabel")} hint={t("emailHint")}>
+                <TextInput
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  dir="ltr"
+                />
+              </Frow>
               <Frow2>
                 <Frow>
                   <Select value={editSegment} onChange={(e) => setEditSegment(e.target.value)}>

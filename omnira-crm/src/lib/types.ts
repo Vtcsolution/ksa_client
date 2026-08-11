@@ -92,6 +92,7 @@ export interface Lead {
   name: string;
   nameEn?: string;
   phone: string;
+  email?: string;
   location: string;
   segment: string; // segment id
   source: LeadSource;
