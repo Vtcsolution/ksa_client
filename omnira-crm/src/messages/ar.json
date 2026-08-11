@@ -877,6 +877,7 @@
     "fromField": "ميداني",
     "fromExcel": "من إكسل",
     "fromZiwo": "تم إنشاؤه تلقائيًا من مكالمة زيوو",
+    "fromWebsite": "من نموذج التواصل على الموقع",
     "notesTitle": "ملاحظات العميل",
     "locationChip": "اللوكيشن",
     "callsChip": "{n} مكالمة · آخرها {dur}",

@@ -253,7 +253,13 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
           <div className="lic-t">
             <div className="lic-l">{t("source")}</div>
             <div className="lic-v">
-              {lead.source === "field" ? t("fromField") : lead.source === "ziwo" ? t("fromZiwo") : t("fromExcel")}
+              {lead.source === "field"
+                ? t("fromField")
+                : lead.source === "ziwo"
+                  ? t("fromZiwo")
+                  : lead.source === "website"
+                    ? t("fromWebsite")
+                    : t("fromExcel")}
             </div>
           </div>
         </div>

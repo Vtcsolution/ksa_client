@@ -877,6 +877,7 @@
     "fromField": "Field",
     "fromExcel": "From Excel",
     "fromZiwo": "Auto-created from a Ziwo call",
+    "fromWebsite": "From the website contact form",
     "notesTitle": "Client Notes",
     "locationChip": "Location",
     "callsChip": "{n} calls · last {dur}",
