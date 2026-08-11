@@ -3,6 +3,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { computeTier, CADENCE } from "@/lib/followupCadence";
 import { draftFollowupMessage } from "@/lib/openai/followupMessage";
 
+type Admin = ReturnType<typeof createAdminClient>;
+const URGENT_THEME = "urgent_response";
+
 const DAY_MS = 86400000;
 
 interface TestimonialHit {
@@ -21,6 +24,7 @@ const THEME_SUBJECT: Record<string, string> = {
   same_day_note: "Great speaking with you — Omnira Valet",
   testimonial: "What other clients are saying — Omnira Valet",
   push_to_book: "Ready to move forward? — Omnira Valet",
+  urgent_response: "We received your message — Omnira Valet team is on it",
 };
 
 /**
@@ -72,6 +76,45 @@ async function fetchMatchingTestimonialQuote(segmentSlug: string | null): Promis
   }
 }
 
+/**
+ * Urgent leads skip the day-by-day cadence entirely (see runFollowupCadenceSweep
+ * below) — the assumption is a human calls them, not a bot. But nothing was
+ * actually reassuring the lead in the meantime, so this fires a same-moment
+ * acknowledgment email alongside the manager notification, from wherever a
+ * lead first gets scored "urgent" (website message or Ziwo call analysis).
+ * Best-effort throughout: a drafting or send failure here never blocks the
+ * caller's own notification/tier-update logic, which has already succeeded
+ * by the time this runs.
+ */
+export async function triggerUrgentFollowupEmail(admin: Admin, lead: { id: string; name: string; email: string | null; notes?: string | null }): Promise<void> {
+  const draft = await draftFollowupMessage({
+    leadName: lead.name,
+    notes: lead.notes || undefined,
+    tier: "urgent",
+    theme: URGENT_THEME,
+  });
+  if (!draft) return;
+
+  await admin.from("followup_messages").insert({
+    lead_id: lead.id,
+    tier: "urgent",
+    step: 0,
+    theme: URGENT_THEME,
+    message_ar: draft.ar,
+    message_en: draft.en,
+    status: "queued",
+  });
+
+  await admin.from("activity_log").insert({
+    lead_id: lead.id,
+    who_id: null,
+    key: "tierFollowupQueued",
+    params: { tier: "urgent", theme: URGENT_THEME },
+  });
+
+  if (lead.email) await sendFollowupEmail(lead.email, URGENT_THEME, draft.en);
+}
+
 export interface CadenceSweepResult {
   ok: boolean;
   scanned: number;
@@ -85,8 +128,9 @@ export interface CadenceSweepResult {
  * next touchpoint's day has arrived, drafts a personalized WhatsApp message
  * and queues it (see followup_messages; actual send activates once the
  * WhatsApp Business API is connected, same "queue until connected" pattern
- * used everywhere else). Urgent tier is NOT handled here — it's fired
- * immediately at the moment a call is analyzed, see ziwo/analysis.ts.
+ * used everywhere else). Urgent tier is NOT handled here — see
+ * triggerUrgentFollowupEmail above, fired immediately the moment a call or
+ * website message is scored urgent (ziwo/analysis.ts, leads/from-website).
  *
  * Also marks a lead dormant the first time its cadence runs out of
  * touchpoints with no status change — "we tried the whole sequence, they

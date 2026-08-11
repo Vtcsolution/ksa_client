@@ -4,6 +4,7 @@ import type { createAdminClient as CreateAdminClient } from "@/lib/supabase/admi
 import { isPhoneLike, normPhone } from "@/lib/phone";
 import { computeTier } from "@/lib/followupCadence";
 import { analyzeWebsiteLead } from "@/lib/openai/websiteLeadScore";
+import { triggerUrgentFollowupEmail } from "@/lib/supabase/followupCadence";
 
 /**
  * Called by the Website the moment a real contact-form submission is saved
@@ -40,7 +41,13 @@ type Admin = ReturnType<typeof CreateAdminClient>;
  * leaves the lead's existing tier untouched (or tier-less on first
  * creation, which the cadence sweep already treats as Cold by default).
  */
-async function scoreAndTagLead(admin: Admin, leadId: string, message: string, service: string | undefined, notifyManagersIfUrgent: boolean) {
+async function scoreAndTagLead(
+  admin: Admin,
+  lead: { id: string; name: string; email: string | null },
+  message: string,
+  service: string | undefined,
+  notifyManagersIfUrgent: boolean,
+) {
   const scored = await analyzeWebsiteLead(message, service);
   if (!scored) return;
 
@@ -49,27 +56,30 @@ async function scoreAndTagLead(admin: Admin, leadId: string, message: string, se
   await admin
     .from("leads")
     .update({ followup_tier: tier, followup_tier_updated_at: now, followup_cadence_started_at: now, followup_step: tier === "urgent" ? 1 : 0 })
-    .eq("id", leadId);
+    .eq("id", lead.id);
   await admin.from("activity_log").insert({
-    lead_id: leadId,
+    lead_id: lead.id,
     who_id: null,
     key: "websiteLeadScored",
     params: { leadScore: scored.leadScore, tier },
   });
 
-  if (tier === "urgent" && notifyManagersIfUrgent) {
-    const { data: managers } = await admin.from("profiles").select("id").eq("role", "manager");
-    if (managers && managers.length > 0) {
-      await admin.from("notifications").insert(
-        managers.map((m) => ({
-          user_id: m.id,
-          lead_id: leadId,
-          kind: "urgentLeadFollowup",
-          params: { leadScore: scored.leadScore },
-          urgent: true,
-        })),
-      );
+  if (tier === "urgent") {
+    if (notifyManagersIfUrgent) {
+      const { data: managers } = await admin.from("profiles").select("id").eq("role", "manager");
+      if (managers && managers.length > 0) {
+        await admin.from("notifications").insert(
+          managers.map((m) => ({
+            user_id: m.id,
+            lead_id: lead.id,
+            kind: "urgentLeadFollowup",
+            params: { leadScore: scored.leadScore },
+            urgent: true,
+          })),
+        );
+      }
     }
+    await triggerUrgentFollowupEmail(admin, { id: lead.id, name: lead.name, email: lead.email, notes: message });
   }
 }
 
@@ -95,11 +105,14 @@ export async function POST(request: NextRequest) {
 
   if (existing) {
     // A later submission with an email we didn't have yet is still worth capturing.
+    const resolvedEmail = email && !existing.email ? email : existing.email;
     if (email && !existing.email) await admin.from("leads").update({ email }).eq("id", existing.id);
     // A returning visitor writing something new is still worth (re-)scoring —
     // notifyManagersIfUrgent stays true since an existing lead suddenly
     // going Urgent is exactly as time-sensitive as a brand-new one.
-    if (payload.message?.trim()) await scoreAndTagLead(admin, existing.id, payload.message, payload.service, true);
+    if (payload.message?.trim()) {
+      await scoreAndTagLead(admin, { id: existing.id, name: payload.name.trim(), email: resolvedEmail }, payload.message, payload.service, true);
+    }
     return NextResponse.json({ ok: true, leadId: existing.id, created: false });
   }
 
@@ -130,7 +143,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  await scoreAndTagLead(admin, created.id, payload.message ?? "", payload.service, true);
+  await scoreAndTagLead(admin, { id: created.id, name: payload.name.trim(), email }, payload.message ?? "", payload.service, true);
 
   return NextResponse.json({ ok: true, leadId: created.id, created: true });
 }

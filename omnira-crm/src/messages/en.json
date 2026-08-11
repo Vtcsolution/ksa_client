@@ -1194,7 +1194,8 @@
       "testimonial": "Testimonial",
       "push_to_book": "Meeting push",
       "value_reminder": "Value reminder",
-      "reengage": "Re-engagement"
+      "reengage": "Re-engagement",
+      "urgent_response": "Urgent acknowledgment"
     },
     "queued": "Queued",
     "messagesTitle": "AI Follow-Up Messages",

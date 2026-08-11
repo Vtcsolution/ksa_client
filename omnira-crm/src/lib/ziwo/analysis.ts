@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getRecordingSignedUrl } from "./callHistory";
 import type { DbBuyingIntent, DbCallSentiment } from "@/lib/supabase/database.types";
 import { computeTier } from "@/lib/followupCadence";
+import { triggerUrgentFollowupEmail } from "@/lib/supabase/followupCadence";
 
 // Structured output schema the analysis model must return. Kept in lockstep
 // with call_insights' columns (src/lib/supabase/database.types.ts) —
@@ -189,6 +190,16 @@ export async function analyzeZiwoCall(params: { ziwoCallId: string; leadId: stri
               urgent: true,
             })),
           );
+        }
+
+        const { data: leadRow } = await supabase.from("leads").select("name, name_en, email").eq("id", leadId).maybeSingle();
+        if (leadRow) {
+          await triggerUrgentFollowupEmail(supabase, {
+            id: leadId,
+            name: leadRow.name_en || leadRow.name,
+            email: leadRow.email,
+            notes: analysis.summary_en,
+          });
         }
       }
     }

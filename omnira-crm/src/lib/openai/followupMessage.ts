@@ -23,7 +23,7 @@ const TIER_TONE: Record<FollowupTier, string> = {
   cold: "Light and educational — no hard sell. This person has shown only vague interest so far.",
   warm: "Warmer and more specific — reference their stated interest directly and gently address the most likely objection (price, timing, or trust).",
   hot: "Fast, personal, and concrete — this person has stated real requirements and is close to deciding. Reference their exact stated needs.",
-  urgent: "N/A — urgent leads get a human phone call, not an automated message.",
+  urgent: "Immediate and reassuring — this person just showed ready-to-buy urgency (explicit deadline, asked for pricing/contract, or said something is needed ASAP). This is a fast first-touch acknowledgment, not the sales pitch — a real person is calling them shortly regardless.",
 };
 
 const THEME_INSTRUCTION: Record<string, string> = {
@@ -38,6 +38,7 @@ const THEME_INSTRUCTION: Record<string, string> = {
   same_day_note: "A same-day personal note referencing exactly what was discussed or requested.",
   testimonial: "Include a short client testimonial (provided below) matched to their business type, to build trust.",
   push_to_book: "A direct, confident call-to-action to book a meeting or get final pricing.",
+  urgent_response: "Acknowledge exactly what they asked for and confirm a specific team member will reach out within minutes to finalize it. Do not restate the full pitch or ask discovery questions — they've already told us what they need; this just confirms we got it and help is on the way right now.",
 };
 
 export async function draftFollowupMessage(params: {
