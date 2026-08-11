@@ -21,23 +21,35 @@ export interface Touchpoint {
   theme: string;
 }
 
-// Cold/warm/hot each get a real cadence; urgent has none — it's a single
+// Cold/warm/hot each get a real cadence, now running the full 90 days before
+// a lead is marked dormant (see followupCadence.ts's sweep) — automation
+// doesn't give up at day 21 anymore, it just spaces touchpoints further
+// apart the longer a lead stays quiet. Urgent has none — it's a single
 // immediate alert (see runFollowupCadenceSweep), not a message sequence.
 export const CADENCE: Record<Exclude<FollowupTier, "urgent">, Touchpoint[]> = {
   cold: [
     { day: 3, theme: "check_in" },
     { day: 10, theme: "share_content" },
-    { day: 21, theme: "final_nurture" },
+    { day: 21, theme: "value_reminder" },
+    { day: 40, theme: "reengage" },
+    { day: 65, theme: "special_offer" },
+    { day: 90, theme: "final_nurture" },
   ],
   warm: [
     { day: 3, theme: "follow_up" },
     { day: 6, theme: "handle_objection" },
-    { day: 10, theme: "special_offer" },
+    { day: 15, theme: "special_offer" },
+    { day: 30, theme: "value_reminder" },
+    { day: 55, theme: "reengage" },
+    { day: 90, theme: "final_nurture" },
   ],
   hot: [
     { day: 1, theme: "same_day_note" },
     { day: 3, theme: "testimonial" },
     { day: 6, theme: "push_to_book" },
+    { day: 15, theme: "handle_objection" },
+    { day: 35, theme: "reengage" },
+    { day: 90, theme: "final_nurture" },
   ],
 };
 

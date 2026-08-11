@@ -1189,7 +1189,9 @@
       "special_offer": "Special offer",
       "same_day_note": "Same-day note",
       "testimonial": "Testimonial",
-      "push_to_book": "Meeting push"
+      "push_to_book": "Meeting push",
+      "value_reminder": "Value reminder",
+      "reengage": "Re-engagement"
     },
     "queued": "Queued",
     "messagesTitle": "AI Follow-Up Messages",

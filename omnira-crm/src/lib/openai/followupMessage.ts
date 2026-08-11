@@ -29,7 +29,9 @@ const TIER_TONE: Record<FollowupTier, string> = {
 const THEME_INSTRUCTION: Record<string, string> = {
   check_in: "A brief, friendly check-in — no pressure, just staying present.",
   share_content: "Share a short piece of useful information about the relevant service, positioned as helpful, not salesy.",
-  final_nurture: "A last, low-pressure touch — invite them to reach out whenever they're ready, without sounding like you're giving up on them.",
+  value_reminder: "A concrete reminder of the actual benefit/value of the service (time saved, better guest experience, fewer parking complaints) — not a generic sales line, tied to their stated needs if known.",
+  reengage: "It's been a while with no reply — acknowledge that gently, ask if anything has changed on their end, and make it easy to pick the conversation back up with zero pressure.",
+  final_nurture: "The day-90 touch, the last one before this lead pauses for a human decision — warm and low-pressure, inviting them to reach out whenever they're ready, without sounding like you're giving up on them.",
   follow_up: "A specific follow-up referencing what they showed interest in.",
   handle_objection: "Gently address the objection most likely holding them back (price, timing, or needing approval) without being asked.",
   special_offer: "Mention a time-limited incentive or offer to create gentle urgency.",

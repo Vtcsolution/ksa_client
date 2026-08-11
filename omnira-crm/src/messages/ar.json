@@ -1189,7 +1189,9 @@
       "special_offer": "عرض خاص",
       "same_day_note": "ملاحظة فورية",
       "testimonial": "شهادة عميل",
-      "push_to_book": "دفع لحجز اجتماع"
+      "push_to_book": "دفع لحجز اجتماع",
+      "value_reminder": "تذكير بالقيمة",
+      "reengage": "إعادة تواصل"
     },
     "queued": "بانتظار الإرسال",
     "messagesTitle": "رسائل المتابعة بالذكاء الاصطناعي",
