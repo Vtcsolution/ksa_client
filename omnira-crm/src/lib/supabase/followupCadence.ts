@@ -32,6 +32,7 @@ export interface CadenceSweepResult {
   ok: boolean;
   scanned: number;
   sent: number;
+  dormant: number;
   errors: string[];
 }
 
@@ -42,18 +43,25 @@ export interface CadenceSweepResult {
  * WhatsApp Business API is connected, same "queue until connected" pattern
  * used everywhere else). Urgent tier is NOT handled here — it's fired
  * immediately at the moment a call is analyzed, see ziwo/analysis.ts.
+ *
+ * Also marks a lead dormant the first time its cadence runs out of
+ * touchpoints with no status change — "we tried the whole sequence, they
+ * went quiet" — so it surfaces on the dashboard instead of silently going
+ * untouched forever. A manager (or the assigned rep) can manually restart
+ * it via restartFollowupCadence, which clears this and begins again at cold.
  */
 export async function runFollowupCadenceSweep(): Promise<CadenceSweepResult> {
   const admin = createAdminClient();
   const errors: string[] = [];
   let sent = 0;
+  let dormant = 0;
 
   const { data: leads, error: leadsErr } = await admin
     .from("leads")
-    .select("id, name, name_en, notes, segment_id, followup_tier, followup_cadence_started_at, followup_step, created_at, status")
+    .select("id, name, name_en, notes, segment_id, followup_tier, followup_cadence_started_at, followup_step, followup_dormant_at, created_at, status")
     .neq("status", "won")
     .neq("status", "archived");
-  if (leadsErr) return { ok: false, scanned: 0, sent: 0, errors: [leadsErr.message] };
+  if (leadsErr) return { ok: false, scanned: 0, sent: 0, dormant: 0, errors: [leadsErr.message] };
 
   const { data: segments } = await admin.from("segments").select("id, name_key, custom_name");
   const segmentLabel = new Map((segments ?? []).map((s) => [s.id, s.custom_name || s.name_key || s.id]));
@@ -68,6 +76,32 @@ export async function runFollowupCadenceSweep(): Promise<CadenceSweepResult> {
     const daysSince = Math.floor((now - new Date(cadenceStart).getTime()) / DAY_MS);
     return daysSince >= touchpoints[lead.followup_step].day;
   });
+
+  const newlyDormant = (leads ?? []).filter((lead) => {
+    const tier = lead.followup_tier ?? "cold";
+    if (tier === "urgent" || lead.followup_dormant_at) return false;
+    return lead.followup_step >= CADENCE[tier].length;
+  });
+  for (const lead of newlyDormant) {
+    try {
+      await admin.from("leads").update({ followup_dormant_at: new Date().toISOString() }).eq("id", lead.id);
+      await admin.from("activity_log").insert({
+        lead_id: lead.id,
+        who_id: null,
+        key: "followupCadenceExhausted",
+        params: { tier: lead.followup_tier ?? "cold" },
+      });
+      const { data: managers } = await admin.from("profiles").select("id").eq("role", "manager");
+      if (managers && managers.length > 0) {
+        await admin.from("notifications").insert(
+          managers.map((m) => ({ user_id: m.id, lead_id: lead.id, kind: "followupCadenceExhausted", params: { tier: lead.followup_tier ?? "cold" }, urgent: false })),
+        );
+      }
+      dormant++;
+    } catch (err) {
+      errors.push(`${lead.id} (dormant): ${err instanceof Error ? err.message : "failed"}`);
+    }
+  }
 
   for (const lead of due) {
     try {
@@ -111,5 +145,5 @@ export async function runFollowupCadenceSweep(): Promise<CadenceSweepResult> {
     }
   }
 
-  return { ok: errors.length === 0, scanned: due.length, sent, errors };
+  return { ok: errors.length === 0, scanned: due.length, sent, dormant, errors };
 }

@@ -29,6 +29,7 @@
     "field": "Field",
     "excel": "Excel",
     "ziwo": "Ziwo",
+    "website": "Website",
     "unassigned": "Unassigned",
     "sar": "SAR",
     "loading": "Loading…",
@@ -314,6 +315,11 @@
     "leaderboardMeetings": "Meetings",
     "leaderboardNeedsSupport": "Needs support",
     "leaderboardCaption": "Ranked by deals won this period, then conversion rate. \"Needs support\" flags a rep with meaningful call volume whose conversion is well below the team average — a coaching signal, not a judgment.",
+    "needsDecisionTitle": "Needs a Decision",
+    "needsDecisionUnassigned": "Unassigned inbound",
+    "needsDecisionDormant": "Dormant follow-ups",
+    "needsDecisionUnassignedChip": "No rep assigned yet",
+    "needsDecisionDormantChip": "Sequence complete, no response",
     "staffPerfTitle": "Staff Performance & Attendance"
   },
   "leadsPage": {
@@ -837,7 +843,9 @@
     "ziwoLeadCreated": "New lead from a Ziwo call: {phone} — needs assignment",
     "followupEscalated": "Follow-up with \"{name}\" is {hours}h+ overdue — auto-escalated",
     "websiteFeedbackAlert": "Website feedback from {name} needs attention — {pct}% severity",
-    "urgentLeadFollowup": "\"{name}\" scored {score}/100 — call now, don't wait for automation"
+    "urgentLeadFollowup": "\"{name}\" scored {score}/100 — call now, don't wait for automation",
+    "websiteLeadCreated": "New website inquiry: {name} — needs assignment",
+    "followupCadenceExhausted": "\"{name}\" finished the {tier} follow-up sequence with no response — needs a decision"
   },
   "leadCard": {
     "transferredBadge": "Transferred from {from}",
@@ -1114,6 +1122,7 @@
     "syncCallsToast": "Synced — {n} call(s) processed from Ziwo.",
     "syncCallsErrorToast": "Sync failed — check the Ziwo connection and try again.",
     "whatsappFollowupQueuedToast": "Follow-up queued and logged on the lead — will send automatically once the WhatsApp Business API is approved.",
+    "followupCadenceRestartedToast": "Follow-up restarted from Cold — the sequence begins again from day one.",
     "whatsappFollowupNoLead": "This call isn't linked to a client yet — assign it to a lead first.",
     "markCallResultFirst": "Mark the call result first",
     "setDateAgreeNow": "Set the date and time — agree with the client now",
@@ -1183,7 +1192,10 @@
       "push_to_book": "Meeting push"
     },
     "queued": "Queued",
-    "messagesTitle": "AI Follow-Up Messages"
+    "messagesTitle": "AI Follow-Up Messages",
+    "dormantTitle": "Follow-up sequence complete — no response",
+    "dormantBody": "Every touchpoint for this tier was sent with no reply. It's paused until someone decides what's next.",
+    "restartBtn": "Restart Follow-up"
   },
   "log": {
     "distributedTo": "Client distributed to {name}",
@@ -1224,7 +1236,9 @@
     "ziwoCallAnalyzed": "AI call analysis ready · lead score {score} · {sentiment}",
     "whatsappFollowupQueued": "WhatsApp follow-up queued: \"{message}\"",
     "meetingSummarized": "AI meeting recap ready · {sentiment}",
-    "tierFollowupQueued": "Follow-up queued · {tier} · {theme}"
+    "tierFollowupQueued": "Follow-up queued · {tier} · {theme}",
+    "followupCadenceExhausted": "Follow-up sequence complete ({tier}) · no response yet",
+    "followupCadenceRestarted": "Follow-up manually restarted from Cold"
   },
   "empty": {
     "noReminders": "No reminders now — any upcoming appointment within 24h shows here"

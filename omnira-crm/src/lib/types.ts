@@ -1,5 +1,5 @@
 export type Role = "manager" | "rep";
-export type LeadSource = "excel" | "field" | "ziwo";
+export type LeadSource = "excel" | "field" | "ziwo" | "website";
 export type LeadStatus =
   | "new"
   | "contacted"
@@ -103,6 +103,7 @@ export interface Lead {
   followupDt: string | null;
   followupEscalated?: boolean;
   followupTier?: "cold" | "warm" | "hot" | "urgent";
+  followupDormant?: boolean;
   followupMessages: FollowupMessageRecord[];
   result: "won" | "archived" | null;
   resultReasonKey: string | null; // reason key or free text (prefixed "custom:")

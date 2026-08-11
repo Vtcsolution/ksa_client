@@ -5,7 +5,7 @@
 // call_insights columns that a fresh generation would already include.
 
 export type UserRole = "manager" | "rep";
-export type DbLeadSource = "excel" | "field" | "ziwo";
+export type DbLeadSource = "excel" | "field" | "ziwo" | "website";
 export type DbLeadStatus = "new" | "contacted" | "interested" | "followup" | "meeting" | "won" | "archived";
 export type DbCallAnswered = "answered" | "noanswer" | "busy";
 export type DbMeetingType = "inperson" | "online";
@@ -93,6 +93,7 @@ export interface Database {
           followup_tier_updated_at: string | null;
           followup_cadence_started_at: string | null;
           followup_step: number;
+          followup_dormant_at: string | null;
           created_at: string;
           updated_at: string;
         };

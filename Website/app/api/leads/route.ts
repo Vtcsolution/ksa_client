@@ -62,6 +62,20 @@ export async function POST(req: NextRequest) {
   // تنبيه فوري (تليجرام إن كان مضبوطًا) — لا يؤثر على نجاح الحفظ
   await notifyNewLead(lead).catch(() => {});
 
+  // يُنشئ نسخة حقيقية من هذا الليد داخل الـCRM فورًا (بدلاً من انتظار مراجعة
+  // يدوية من "استفسارات الموقع") — يدخل نفس مسار المتابعة المرحلي كأي ليد
+  // آخر. أفضل جهد فقط: فشل هذا الاستدعاء لا يجب أبدًا أن يمنع حفظ الليد نفسه.
+  const crmUrl = process.env.CRM_URL;
+  const secret = process.env.FEEDBACK_SYNC_SECRET;
+  if (crmUrl && secret) {
+    fetch(`${crmUrl}/api/leads/from-website`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-secret': secret },
+      body: JSON.stringify({ name: lead.name, phone: lead.phone, email: lead.email, service: lead.service, message: lead.message }),
+      signal: AbortSignal.timeout(5000),
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true });
 }
 

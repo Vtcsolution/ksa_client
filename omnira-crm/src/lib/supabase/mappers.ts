@@ -121,6 +121,7 @@ export function mapLead(row: LeadWithRelations): Lead {
     // must read as not-escalated again.
     followupEscalated: !!(followupDt && row.followup_escalated_at && ms(row.followup_escalated_at) >= ms(followupDt)),
     followupTier: row.followup_tier ?? undefined,
+    followupDormant: !!row.followup_dormant_at,
     followupMessages: mapFollowupMessages(row.followup_messages),
     result: (row.result as Lead["result"]) ?? null,
     resultReasonKey: row.result_reason_key,

@@ -139,6 +139,12 @@ export function useLogLineText(entry: LogEntry): string {
     case "tierFollowupQueued": {
       return t("tierFollowupQueued", { tier: tFollowup(`tier.${String(p.tier ?? "")}`), theme: tFollowup(`theme.${String(p.theme ?? "")}`) });
     }
+    case "followupCadenceExhausted": {
+      return t("followupCadenceExhausted", { tier: tFollowup(`tier.${String(p.tier ?? "")}`) });
+    }
+    case "followupCadenceRestarted": {
+      return t("followupCadenceRestarted");
+    }
     case "whatsappFollowupQueued": {
       const message = locale === "ar" ? String(p.messageAr ?? "") : String(p.messageEn ?? "");
       return t("whatsappFollowupQueued", { message });

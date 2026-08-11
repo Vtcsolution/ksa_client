@@ -37,6 +37,7 @@ export default function NotifBell() {
   const tUsers = useTranslations("users");
   const tDate = useTranslations("dateHelpers");
   const tSentiment = useTranslations("callInsightModal.sentiment");
+  const tTier = useTranslations("followupCadence");
   const locale = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -186,6 +187,28 @@ export default function NotifBell() {
           urgent: n.urgent,
           icon: AlertTriangle,
           text: t("urgentLeadFollowup", { name: lead ? resolveLeadName(lead, locale) : "", score: Number(n.params.leadScore ?? 0) }),
+          onOpen: () => markNotificationRead(n.id),
+        });
+      } else if (n.kind === "websiteLeadCreated") {
+        out.push({
+          id: n.id,
+          dt: n.at,
+          leadId: n.leadId,
+          urgent: n.urgent,
+          icon: Phone,
+          text: t("websiteLeadCreated", { name: String(n.params.name ?? "") }),
+          onOpen: () => markNotificationRead(n.id),
+        });
+      } else if (n.kind === "followupCadenceExhausted") {
+        const lead = leads.find((l) => l.id === n.leadId);
+        const tierKey = String(n.params.tier ?? "cold");
+        out.push({
+          id: n.id,
+          dt: n.at,
+          leadId: n.leadId,
+          urgent: n.urgent,
+          icon: AlertTriangle,
+          text: t("followupCadenceExhausted", { name: lead ? resolveLeadName(lead, locale) : "", tier: tTier(`tier.${tierKey}`) }),
           onOpen: () => markNotificationRead(n.id),
         });
       }

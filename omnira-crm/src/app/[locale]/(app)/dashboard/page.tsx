@@ -41,6 +41,7 @@ import {
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
+  const tFollowup = useTranslations("followupCadence");
   const tCommon = useTranslations("common");
   const tUsers = useTranslations("users");
   const tWeekdays = useTranslations("weekdays");
@@ -127,6 +128,13 @@ export default function DashboardPage() {
   );
   const wonViaMeeting = leads.filter((l) => l.status === "won" && l.contract?.via === "meeting").length;
   const wonDirect = leads.filter((l) => l.status === "won" && l.contract?.via === "direct").length;
+
+  // Leads that would otherwise silently go untouched: inbound (website/Ziwo)
+  // leads nobody has claimed yet, and leads whose whole cold/warm/hot
+  // sequence ran out with no response — both need a human decision, not
+  // more automation.
+  const unassignedLeads = leads.filter((l) => !l.assignedTo && l.status !== "won" && l.status !== "archived");
+  const dormantLeads = leads.filter((l) => l.followupDormant);
 
   const phoneEditRows = reps
     .map((r) => {
@@ -272,6 +280,47 @@ export default function DashboardPage() {
               </div>
             </div>
           ))}
+        </Panel>
+      )}
+
+      {(unassignedLeads.length > 0 || dormantLeads.length > 0) && (
+        <Panel style={{ borderColor: "var(--muted)" }}>
+          <PanelHeader icon={Users} title={t("needsDecisionTitle")} />
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+            <Chip cls="new">{t("needsDecisionUnassigned")}: {formatNumber(unassignedLeads.length, locale)}</Chip>
+            <Chip cls="archived">{t("needsDecisionDormant")}: {formatNumber(dormantLeads.length, locale)}</Chip>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {unassignedLeads.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="lead-card"
+                style={{ textAlign: "start", margin: 0 }}
+                onClick={() => openModal({ type: "leadDetail", leadId: l.id })}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <b className="lc-name">{resolveLeadName(l, locale)}</b>
+                  <Chip cls="new">{t("needsDecisionUnassignedChip")}</Chip>
+                </div>
+              </button>
+            ))}
+            {dormantLeads.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="lead-card"
+                style={{ textAlign: "start", margin: 0 }}
+                onClick={() => openModal({ type: "leadDetail", leadId: l.id })}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <b className="lc-name">{resolveLeadName(l, locale)}</b>
+                  {l.followupTier && <Chip cls={`tier-${l.followupTier}`}>{tFollowup(`tier.${l.followupTier}`)}</Chip>}
+                  <Chip cls="archived">{t("needsDecisionDormantChip")}</Chip>
+                </div>
+              </button>
+            ))}
+          </div>
         </Panel>
       )}
 

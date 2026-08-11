@@ -533,3 +533,19 @@ export async function queueWhatsappFollowup(
   if (error) throw error;
   await logActivity(supabase, leadId, actorId, "whatsappFollowupQueued", { messageAr, messageEn });
 }
+
+/**
+ * Manually re-targets a dormant lead — one whose cadence ran the whole
+ * cold/warm/hot sequence with no response (see followupCadence.ts). Always
+ * restarts at cold: there's no new AI signal to justify anything higher,
+ * just a deliberate human decision to try again.
+ */
+export async function restartFollowupCadence(supabase: Client, leadId: string, actorId: string) {
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("leads")
+    .update({ followup_tier: "cold", followup_tier_updated_at: now, followup_cadence_started_at: now, followup_step: 0, followup_dormant_at: null })
+    .eq("id", leadId);
+  if (error) throw error;
+  await logActivity(supabase, leadId, actorId, "followupCadenceRestarted");
+}

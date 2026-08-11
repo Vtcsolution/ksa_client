@@ -127,6 +127,7 @@ interface AppState {
   markMeetingDone: (leadId: string, actorId: string, proof: boolean, notes?: string) => Promise<void>;
   markMeetingMissed: (leadId: string, actorId: string, reasonKey: string, rescheduleDt?: string) => Promise<void>;
   queueWhatsappFollowup: (callId: string, leadId: string, messageAr: string, messageEn: string) => Promise<void>;
+  restartFollowupCadence: (leadId: string) => Promise<void>;
 }
 
 /** Wraps a mutation: runs it, surfaces a generic toast on failure instead of throwing into an onClick handler. */
@@ -696,6 +697,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
       set((s) => ({ callInsights: s.callInsights.map((c) => (c.id === callId ? { ...c, whatsappSent: true } : c)) }));
       await get().refreshLead(leadId);
       push("whatsappFollowupQueuedToast");
+    }, undefined);
+  },
+
+  restartFollowupCadence: async (leadId) => {
+    const actorId = get().currentUserId;
+    if (!actorId) return;
+    await guarded(async () => {
+      await mut.restartFollowupCadence(createClient(), leadId, actorId);
+      await get().refreshLead(leadId);
+      push("followupCadenceRestartedToast");
     }, undefined);
   },
 }));

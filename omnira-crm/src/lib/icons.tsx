@@ -315,6 +315,7 @@ export function getMeetingTypeIcon(type: MeetingType): LucideIcon {
 export function getSourceIcon(source: LeadSource): LucideIcon {
   if (source === "field") return Car;
   if (source === "ziwo") return Phone;
+  if (source === "website") return Globe;
   return FileSpreadsheet;
 }
 
@@ -331,6 +332,7 @@ export function MeetingTypeIcon({ type, ...props }: { type: MeetingType } & Icon
 export function SourceIcon({ source, ...props }: { source: LeadSource } & IconProps) {
   if (source === "field") return <Car {...props} />;
   if (source === "ziwo") return <Phone {...props} />;
+  if (source === "website") return <Globe {...props} />;
   return <FileSpreadsheet {...props} />;
 }
 

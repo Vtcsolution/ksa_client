@@ -83,6 +83,7 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
   const setFollowup = useAppStore((s) => s.setFollowup);
   const markMeetingDone = useAppStore((s) => s.markMeetingDone);
   const markMeetingMissed = useAppStore((s) => s.markMeetingMissed);
+  const restartFollowupCadence = useAppStore((s) => s.restartFollowupCadence);
   const setReferredByCode = useAppStore((s) => s.setReferredByCode);
 
   const [resultFlow, setResultFlow] = useState<ResultFlow>(null);
@@ -389,6 +390,20 @@ export default function LeadDetailModal({ leadId }: { leadId: string }) {
               {t("nextStepsLabel")}: {locale === "ar" ? lead.meeting.nextStepsAr : lead.meeting.nextStepsEn}
             </p>
           )}
+        </div>
+      )}
+
+      {lead.followupDormant && (
+        <div className="panel" style={{ marginBottom: 14, borderColor: "var(--muted)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--cream2)", marginBottom: 2 }}>{tFollowup("dormantTitle")}</div>
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>{tFollowup("dormantBody")}</div>
+            </div>
+            <Button sm variant="gold" onClick={() => restartFollowupCadence(leadId)}>
+              {tFollowup("restartBtn")}
+            </Button>
+          </div>
         </div>
       )}
 

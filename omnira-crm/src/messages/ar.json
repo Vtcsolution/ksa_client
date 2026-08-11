@@ -29,6 +29,7 @@
     "field": "ميداني",
     "excel": "إكسل",
     "ziwo": "زيوو",
+    "website": "الموقع",
     "unassigned": "غير مسندة",
     "sar": "﷼",
     "loading": "جارٍ التحميل…",
@@ -314,6 +315,11 @@
     "leaderboardMeetings": "الاجتماعات",
     "leaderboardNeedsSupport": "يحتاج دعمًا",
     "leaderboardCaption": "مرتّبة حسب الصفقات الفائزة هذه الفترة، ثم معدل التحويل. \"يحتاج دعمًا\" تُشير لموظف لديه حجم مكالمات كافٍ لكن تحويله أقل بوضوح من متوسط الفريق — إشارة للتدريب، لا حكم.",
+    "needsDecisionTitle": "يحتاج قرارًا",
+    "needsDecisionUnassigned": "استفسارات غير معيّنة",
+    "needsDecisionDormant": "متابعات متوقفة",
+    "needsDecisionUnassignedChip": "لم يُعيَّن مندوب بعد",
+    "needsDecisionDormantChip": "انتهت السلسلة، لا رد",
     "staffPerfTitle": "أداء الموظفين والحضور"
   },
   "leadsPage": {
@@ -837,7 +843,9 @@
     "ziwoLeadCreated": "عميل جديد من مكالمة زيوو: {phone} — يحتاج تعيين",
     "followupEscalated": "متابعة «{name}» تجاوزت {hours} ساعة دون رد — صُعّدت تلقائياً",
     "websiteFeedbackAlert": "ملاحظة من {name} على الموقع تحتاج متابعة — خطورة {pct}٪",
-    "urgentLeadFollowup": "«{name}» سجّل {score}/100 — اتصلوا الآن، لا تنتظروا الأتمتة"
+    "urgentLeadFollowup": "«{name}» سجّل {score}/100 — اتصلوا الآن، لا تنتظروا الأتمتة",
+    "websiteLeadCreated": "استفسار جديد من الموقع: {name} — يحتاج تعيين",
+    "followupCadenceExhausted": "«{name}» أنهى سلسلة متابعة {tier} دون رد — يحتاج قرارًا"
   },
   "leadCard": {
     "transferredBadge": "محوّل من {from}",
@@ -1114,6 +1122,7 @@
     "syncCallsToast": "تمت المزامنة — تمت معالجة {n} مكالمة من Ziwo.",
     "syncCallsErrorToast": "فشلت المزامنة — تحقق من اتصال Ziwo وحاول مرة أخرى.",
     "whatsappFollowupQueuedToast": "تمت جدولة المتابعة وتسجيلها على العميل — سترسل تلقائياً عند اعتماد واجهة WhatsApp Business.",
+    "followupCadenceRestartedToast": "أُعيدت المتابعة من مرحلة بارد — السلسلة تبدأ من جديد من اليوم الأول.",
     "whatsappFollowupNoLead": "هذه المكالمة غير مرتبطة بعميل بعد — اربطها بعميل أولاً.",
     "markCallResultFirst": "أشّر نتيجة المكالمة أولاً",
     "setDateAgreeNow": "حدّد التاريخ والوقت — اتفق مع العميل الآن",
@@ -1183,7 +1192,10 @@
       "push_to_book": "دفع لحجز اجتماع"
     },
     "queued": "بانتظار الإرسال",
-    "messagesTitle": "رسائل المتابعة بالذكاء الاصطناعي"
+    "messagesTitle": "رسائل المتابعة بالذكاء الاصطناعي",
+    "dormantTitle": "سلسلة المتابعة اكتملت — لا رد",
+    "dormantBody": "أُرسلت كل رسائل هذه المرحلة دون رد. متوقفة حتى يُقرَّر أحد الخطوة التالية.",
+    "restartBtn": "إعادة تشغيل المتابعة"
   },
   "log": {
     "distributedTo": "وزّع العميل لـ{name}",
@@ -1224,7 +1236,9 @@
     "ziwoCallAnalyzed": "تحليل الذكاء الاصطناعي جاهز · نقاط العميل {score} · {sentiment}",
     "whatsappFollowupQueued": "جدولة متابعة واتساب: «{message}»",
     "meetingSummarized": "ملخص الاجتماع بالذكاء الاصطناعي جاهز · {sentiment}",
-    "tierFollowupQueued": "جدولة رسالة متابعة · {tier} · {theme}"
+    "tierFollowupQueued": "جدولة رسالة متابعة · {tier} · {theme}",
+    "followupCadenceExhausted": "اكتملت سلسلة المتابعة ({tier}) · لا رد بعد",
+    "followupCadenceRestarted": "أُعيد تشغيل المتابعة يدويًا من بارد"
   },
   "empty": {
     "noReminders": "لا تذكيرات الآن — كل موعد قادم خلال ٢٤ ساعة يظهر هنا"
