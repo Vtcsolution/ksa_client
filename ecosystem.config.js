@@ -17,6 +17,14 @@
 // Both apps must already be built once (`npm install && npm run build` in
 // each directory) before starting, and each directory's `.env.local` must
 // be filled in with real production values first.
+//
+// The 5 background loop processes run precompiled plain JS from
+// scripts-dist/ (see `npm run build:scripts` in each app), not raw
+// TypeScript via tsx — they don't import any app source, only fetch() the
+// app's own already-running API routes on a timer. This means, once built,
+// neither app's raw `src/` (or `app/`/`lib/` for Website) or scripts/*.ts
+// is needed to run in production, and can be safely removed from a server
+// where you don't want the raw source sitting around.
 
 module.exports = {
   apps: [
@@ -32,8 +40,7 @@ module.exports = {
     {
       name: 'omnira-crm-ziwo-poll',
       cwd: './omnira-crm',
-      script: 'npx',
-      args: 'tsx scripts/ziwo-poll-loop.ts',
+      script: 'scripts-dist/ziwo-poll-loop.js',
       instances: 1,
       exec_mode: 'fork',
       env: { NODE_ENV: 'production' },
@@ -41,8 +48,7 @@ module.exports = {
     {
       name: 'omnira-crm-followups-escalate',
       cwd: './omnira-crm',
-      script: 'npx',
-      args: 'tsx scripts/followup-escalation-loop.ts',
+      script: 'scripts-dist/followup-escalation-loop.js',
       instances: 1,
       exec_mode: 'fork',
       env: { NODE_ENV: 'production' },
@@ -50,8 +56,7 @@ module.exports = {
     {
       name: 'omnira-crm-followups-cadence',
       cwd: './omnira-crm',
-      script: 'npx',
-      args: 'tsx scripts/followup-cadence-loop.ts',
+      script: 'scripts-dist/followup-cadence-loop.js',
       instances: 1,
       exec_mode: 'fork',
       env: { NODE_ENV: 'production' },
@@ -68,8 +73,7 @@ module.exports = {
     {
       name: 'omnira-website-feedback-escalate',
       cwd: './Website',
-      script: 'npx',
-      args: 'tsx scripts/feedback-escalation-loop.ts',
+      script: 'scripts-dist/feedback-escalation-loop.js',
       instances: 1,
       exec_mode: 'fork',
       env: { NODE_ENV: 'production' },
@@ -77,8 +81,7 @@ module.exports = {
     {
       name: 'omnira-website-marketing-scheduler',
       cwd: './Website',
-      script: 'npx',
-      args: 'tsx scripts/campaign-scheduler-loop.ts',
+      script: 'scripts-dist/campaign-scheduler-loop.js',
       instances: 1,
       exec_mode: 'fork',
       env: { NODE_ENV: 'production' },

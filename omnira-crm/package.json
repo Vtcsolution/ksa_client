@@ -10,7 +10,8 @@
     "seed": "tsx scripts/seed.ts",
     "ziwo:poll-loop": "tsx scripts/ziwo-poll-loop.ts",
     "followups:escalate-loop": "tsx scripts/followup-escalation-loop.ts",
-    "followups:cadence-loop": "tsx scripts/followup-cadence-loop.ts"
+    "followups:cadence-loop": "tsx scripts/followup-cadence-loop.ts",
+    "build:scripts": "tsc scripts/ziwo-poll-loop.ts scripts/followup-escalation-loop.ts scripts/followup-cadence-loop.ts --outDir scripts-dist --module commonjs --target es2020 --esModuleInterop --skipLibCheck --moduleResolution node --removeComments"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

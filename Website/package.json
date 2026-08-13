@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "feedback:escalate-loop": "tsx scripts/feedback-escalation-loop.ts",
-    "marketing:scheduler-loop": "tsx scripts/campaign-scheduler-loop.ts"
+    "marketing:scheduler-loop": "tsx scripts/campaign-scheduler-loop.ts",
+    "build:scripts": "tsc scripts/feedback-escalation-loop.ts scripts/campaign-scheduler-loop.ts --outDir scripts-dist --module commonjs --target es2020 --esModuleInterop --skipLibCheck --moduleResolution node --removeComments"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.1",
