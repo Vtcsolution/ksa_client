@@ -53,7 +53,12 @@
     "managerDesc": "Manager · Full permissions",
     "faresDesc": "Sales rep · calls and visits",
     "azzaDesc": "Meetings officer · receives and closes",
-    "genericRepDesc": "Sales rep"
+    "genericRepDesc": "Sales rep",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loginButton": "Log in",
+    "invalidCredentials": "Incorrect email or password.",
+    "orDivider": "or"
   },
   "nav": {
     "sectionMain": "Main",
